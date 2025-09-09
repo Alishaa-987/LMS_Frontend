@@ -6,7 +6,9 @@ export default function DashboardLayout({
 }>) {
   return (
     <html lang="en">
-      <div>dashbaord{children}</div>
+      <div>Dashbaord{children}
+        
+      </div>
     </html>
   );
 }

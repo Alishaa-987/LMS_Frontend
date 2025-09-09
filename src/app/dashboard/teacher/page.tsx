@@ -2,7 +2,7 @@ import React from 'react'
 
 function TeacherPage() {
   return (
-    <div>TeacherPage</div>
+    <div>Teacher Page</div>
   )
 }
 

@@ -1,5 +1,8 @@
+import Announcements from "@/components/Announcements";
 import AttendenceChart from "@/components/AttendenceChart";
 import CountChart from "@/components/CountChart";
+import EventCalender from "@/components/EventCalender";
+import FinanceChart from "@/components/FinanceChart";
 import UserCard from "@/components/UserCard";
 import React from "react";
 
@@ -28,10 +31,15 @@ function AdminPage() {
           </div>
         </div>
         {/* Bottom Chart */}
-        <div></div>
+        <div className="w-full h-[500px]">
+          <FinanceChart/>
+        </div>
       </div>
       {/* right */}
-      <div className="w-full lg:w-1/3"></div>
+      <div className="w-full lg:w-1/3 flex flex-col gap-6">
+        <EventCalender />
+        <Announcements />
+      </div>
     </div>
   );
 }

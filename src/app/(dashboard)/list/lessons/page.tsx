@@ -1,9 +1,9 @@
+import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { lessonsData, role, subjectsData } from "@/lib/data";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 type Lesson = {
@@ -48,15 +48,12 @@ const LessonListPage = () => {
 
       <td>
         <div className="flex items-center gap-4">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
-              <Image src="/edit.png" alt="" width={18} height={28} />
-            </button>
-          </Link>
           {role === "admin" && (
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaPurple">
-              <Image src="/delete.png" alt="" width={18} height={28} />
-            </button>
+            <>
+              <FormModel table="lessons" type="update" data={item} />
+
+              <FormModel table="lessons" type="delete" id={item.id} />
+            </>
           )}
         </div>
       </td>
@@ -79,9 +76,8 @@ const LessonListPage = () => {
           </button>
 
           {role === "admin" && (
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" alt="" width={14} height={14} />
-            </button>
+             <FormModel table="lessons" type="create"/>
+
           )}
         </div>
       </div>

@@ -1,3 +1,4 @@
+import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -42,15 +43,12 @@ const SubjectListPage = () => {
 
       <td>
         <div className="flex items-center gap-4">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
-              <Image src="/edit.png" alt="" width={18} height={28} />
-            </button>
-          </Link>
+          
           {role === "admin" && (
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaPurple">
-              <Image src="/delete.png" alt="" width={18} height={28} />
-            </button>
+            <>
+              <FormModel table="subject" type="update" data={item} />
+              <FormModel table="subject" type="delete" data={item.id} />
+            </>
           )}
         </div>
       </td>
@@ -72,11 +70,7 @@ const SubjectListPage = () => {
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && (
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" alt="" width={14} height={14} />
-            </button>
-          )}
+          {role === "admin" && <FormModel table="teacher" type="create" />}
         </div>
       </div>
       {/* List */}

@@ -41,6 +41,8 @@ const TeacherForm = ({ type, data }: {
   const onSubmit = handleSubmit((data)=>{
       console.log(data)
   })
+
+  
     return (
         <form className='flex flex-col gap-8' onSubmit={onSubmit}>
             <h1 className='text-xl font-semibold'>Create a new teacher</h1>

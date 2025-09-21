@@ -47,7 +47,7 @@ const SubjectListPage = () => {
           {role === "admin" && (
             <>
               <FormModel table="subject" type="update" data={item} />
-              <FormModel table="subject" type="delete" data={item.id} />
+              <FormModel table="subject" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -70,7 +70,7 @@ const SubjectListPage = () => {
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && <FormModel table="teacher" type="create" />}
+          {role === "admin" && <FormModel table="subject" type="create" />}
         </div>
       </div>
       {/* List */}

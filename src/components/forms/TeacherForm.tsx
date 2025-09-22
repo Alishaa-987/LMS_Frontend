@@ -130,6 +130,8 @@ const TeacherForm = ({
         type="date"
         inputProps={{}}
       />
+
+      
       <span className="text-xs text-gray-400 font-medium">
         Personal Infomration
       </span>

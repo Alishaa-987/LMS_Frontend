@@ -51,7 +51,13 @@ const TeacherForm = ({
       <span className="text-xs text-gray-400 font-medium">
         Authentication Infomration
       </span>
-      <InputField
+
+      
+      <span className="text-xs text-gray-400 font-medium">
+        Personal Infomration
+      </span>
+      <div className="flex justify-between flex-wrap gap-4">
+              <InputField
         label="Username"
         name="username"
         defaultValue={data?.username}
@@ -133,10 +139,8 @@ const TeacherForm = ({
         inputProps={{}}
       />
 
-      
-      <span className="text-xs text-gray-400 font-medium">
-        Personal Infomration
-      </span>
+      </div>
+
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>

@@ -27,7 +27,7 @@ const InputField =({
         {...register(name)}
         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
         {...inputProps}
-        defaultVlaue={defaultValue}
+        defaultValue={defaultValue}
       />
       {error?.message && (
         <p className="text-red-400 text-xs">

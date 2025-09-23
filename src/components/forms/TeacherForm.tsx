@@ -5,6 +5,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod"; // or 'zod/v4'
 import InputField from "../InputField";
+import Image from "next/image";
 const schema = z.object({
   username: z
     .string()
@@ -19,7 +20,7 @@ const schema = z.object({
   lastName: z.string().min(1, { message: "Last name is required" }),
   phone: z.string().min(1, { message: "Phone is required" }),
   address: z.string().min(1, { message: "Adress is required" }),
-bloodType: z.string().min(1, { message: "Blood Type is required" }),
+  bloodType: z.string().min(1, { message: "Blood Type is required" }),
 
   birthday: z.date({ message: "Birthday is required" }),
   sex: z.enum(["male", "female"], { message: "Sex is required" }),
@@ -47,99 +48,128 @@ const TeacherForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Create a new teacher</h1>
+      <h1 className="text-xl font-semibold">{type === "create" ? "Create a new teacher" : "Update teacher"}</h1>
       <span className="text-xs text-gray-400 font-medium">
         Authentication Infomration
       </span>
 
-      
+      <div className="flex justify-between flex-wrap gap-4">
+        <InputField
+          label="Username"
+          name="username"
+          defaultValue={data?.username}
+          register={register}
+          error={errors?.username}
+          inputProps={{}}
+        />
+
+        <InputField
+          label="Email"
+          name="email"
+          type="email"
+          defaultValue={data?.email}
+          register={register}
+          error={errors?.email}
+          inputProps={{}}
+        />
+
+        <InputField
+          label="Password"
+          name="password"
+          type="password"
+          defaultValue={data?.password}
+          register={register}
+          error={errors?.password}
+          inputProps={{}}
+        />
+      </div>
+
       <span className="text-xs text-gray-400 font-medium">
         Personal Infomration
       </span>
       <div className="flex justify-between flex-wrap gap-4">
-              <InputField
-        label="Username"
-        name="username"
-        defaultValue={data?.username}
-        register={register}
-        error={errors?.username}
-        inputProps={{}}
-      />
+        <InputField
+          label="First Name"
+          name="firstName"
+          defaultValue={data?.firstName}
+          register={register}
+          error={errors?.firstName}
+          inputProps={{}}
+        />
+        <InputField
+          label="Last Name"
+          name="lastName"
+          defaultValue={data?.lastName}
+          register={register}
+          error={errors?.lastName}
+          inputProps={{}}
+        />
+        <InputField
+          label="Phone"
+          name="phone"
+          defaultValue={data?.phone}
+          register={register}
+          error={errors?.phone}
+          inputProps={{}}
+        />
+        <InputField
+          label="Address"
+          name="address"
+          defaultValue={data?.address}
+          register={register}
+          error={errors?.address}
+          inputProps={{}}
+        />
 
         <InputField
-        label="Email"
-        name="email"
-        type="email"
-        defaultValue={data?.email}
-        register={register}
-        error={errors?.email}
-        inputProps={{}}
-      />  
-      
-      <InputField
-        label="Password"
-        name="password"
-        type="password"
-        defaultValue={data?.password}
-        register={register}
-        error={errors?.password}
-        inputProps={{}}
-      />
-  <InputField
-        label="First Name"
-        name="firstName"
-        defaultValue={data?.firstName}
-        register={register}
-        error={errors?.firstName}
-        inputProps={{}}
-      />
-        <InputField
-        label="Last Name"
-        name="lastName"
-        defaultValue={data?.lastName}
-        register={register}
-        error={errors?.lastName}
-        inputProps={{}}
-      />
-        <InputField
-        label="Phone"
-        name="phone"
-        defaultValue={data?.phone}
-        register={register}
-        error={errors?.phone}
-        inputProps={{}}
-      />
-        <InputField
-        label="Address"
-        name="address"
-        defaultValue={data?.address}
-        register={register}
-        error={errors?.address}
-        inputProps={{}}
-      />  
-      
-      <InputField
-        label="Blood Type"
-        name="bloodType"
-        defaultValue={data?.bloodType}
-        register={register}
-        error={errors?.bloodType}
-        inputProps={{}}
-      />
-
-
+          label="Blood Type"
+          name="bloodType"
+          defaultValue={data?.bloodType}
+          register={register}
+          error={errors?.bloodType}
+          inputProps={{}}
+        />
 
         <InputField
-        label="Birthday"
-        name="birthday"
-        defaultValue={data?.birthday}
-        register={register}
-        error={errors?.birthday}
-        type="date"
-        inputProps={{}}
-      />
-
+          label="Birthday"
+          name="birthday"
+          defaultValue={data?.birthday}
+          register={register}
+          error={errors?.birthday}
+          type="date"
+          inputProps={{}}
+        />
+ <div className="flex flex-col gap-2 w-full md:w-1/4">
+        <label className="text-xs text-gray-500">Sex</label>
+        <select
+          className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+          {...register("sex")}
+          defaultValue={data?.sex}
+        >
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        {errors.sex?.message && (
+          <p className="text-red-400 text-xs">
+            {errors.sex.message.toString()}
+          </p>
+        )}
       </div>
+
+        <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
+        <label className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer" htmlFor="img">
+            <Image src="/upload.png" alt="" width={28} height={28} id="img"/>
+            <span>Upoad a photo</span>
+        </label>
+        <input type="file" {...register("img")} className="hidden"/>
+        {errors.img?.message && (
+          <p className="text-red-400 text-xs">
+            {errors.img.message.toString()}
+          </p>
+        )}
+      </div>
+</div>
+     
 
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}

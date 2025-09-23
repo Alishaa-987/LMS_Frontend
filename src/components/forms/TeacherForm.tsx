@@ -14,8 +14,8 @@ const schema = z.object({
 
   email: z.string().email({ message: "Invalid email address" }),
   password: z
-    .string()
-    .min(8, { message: "password must be atleast 8 character long" }),
+  .string()
+  .min(8, { message: "password must be atleast 8 character long" }),
   firstName: z.string().min(1, { message: "First Name is required" }),
   lastName: z.string().min(1, { message: "Last name is required" }),
   phone: z.string().min(1, { message: "Phone is required" }),
@@ -77,7 +77,7 @@ const TeacherForm = ({
           label="Password"
           name="password"
           type="password"
-          defaultValue={data?.password}
+          defaultValue={type === "update" ? "password" : data?.password}
           register={register}
           error={errors?.password}
           inputProps={{}}
@@ -133,7 +133,7 @@ const TeacherForm = ({
         <InputField
           label="Birthday"
           name="birthday"
-          defaultValue={data?.birthday}
+          defaultValue={type === "create" ? data?.birthday : undefined}
           register={register}
           error={errors?.birthday}
           type="date"

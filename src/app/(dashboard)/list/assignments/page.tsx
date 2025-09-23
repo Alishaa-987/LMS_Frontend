@@ -57,13 +57,13 @@ const AssignmentListPage = () => {
       <td>
         <div className="flex items-center gap-4">
           <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
-              <Image src="/edit.png" alt="" width={18} height={28} />
+            <button className="w-7 flex items-center justify-center rounded-full bg-lamaSky">
+              <Image src="/update.png" alt="" width={16} height={16} />
             </button>
           </Link>
           {role === "admin" && (
-            <button className="w-7 flex items-center justify-center rounded-sm bg-lamaPurple">
-              <Image src="/delete.png" alt="" width={18} height={28} />
+            <button className="w-7 flex items-center justify-center rounded-full bg-lamaPurple">
+              <Image src="/delete.png" alt=""width={16} height={16} />
             </button>
           )}
         </div>

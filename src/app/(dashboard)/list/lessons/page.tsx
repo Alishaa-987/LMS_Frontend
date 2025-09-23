@@ -50,9 +50,9 @@ const LessonListPage = () => {
         <div className="flex items-center gap-4">
           {role === "admin" && (
             <>
-              <FormModel table="lessons" type="update" data={item} />
+              <FormModel table="lesson" type="update" data={item} />
 
-              <FormModel table="lessons" type="delete" id={item.id} />
+              <FormModel table="lesson" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -76,7 +76,7 @@ const LessonListPage = () => {
           </button>
 
           {role === "admin" && (
-             <FormModel table="lessons" type="create"/>
+             <FormModel table="lesson" type="create"/>
 
           )}
         </div>

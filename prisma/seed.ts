@@ -21,6 +21,7 @@ async function main() {
     await prisma.grade.create({
       data: {
         level: i,
+        name: `Grade ${i}`,
       },
     });
   }

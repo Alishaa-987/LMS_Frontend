@@ -84,7 +84,7 @@ const StudentListPage = () => {
 
       <td>
         <div className="flex items-center gap-4">
-          <Link href={`/list/teachers/${item.id}`}>
+          <Link href={`/list/students/${item.id}`}>
             <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
               <Image src="/edit.png" alt="" width={18} height={28} />
             </button>
@@ -129,7 +129,7 @@ const StudentListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={studentsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+<Pagination page={1} count={50} />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import { parentsData, role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Parent = {
@@ -45,6 +46,10 @@ const columns = [
 ];
 
 const ParentListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = parentsData.length;
   const renderRow = (item: Parent) => (
     <tr
       key={item.id}
@@ -100,7 +105,7 @@ const ParentListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={parentsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

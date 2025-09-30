@@ -4,6 +4,7 @@ import TableSearch from "@/components/TableSearch";
 import {  eventsData, role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Event = {
@@ -47,6 +48,10 @@ const columns = [
 ];
 
 const EventListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = eventsData.length;
   const renderRow = (item: Event) => (
     <tr
       key={item.id}
@@ -103,7 +108,7 @@ const EventListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={eventsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

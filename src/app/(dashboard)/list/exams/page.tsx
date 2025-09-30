@@ -5,6 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import { examsData, lessonsData, role, subjectsData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Exam = {
@@ -42,6 +43,10 @@ const columns = [
 ];
 
 const ExamListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = examsData.length;
   const renderRow = (item: Exam) => (
     <tr
       key={item.id}
@@ -95,7 +100,7 @@ const ExamListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={examsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

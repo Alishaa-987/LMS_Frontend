@@ -5,19 +5,20 @@ import TableSearch from "@/components/TableSearch";
 import { role, studentsData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Student = {
-  id: number;
-  studentId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  phone?: string;
-  grade: string[];
-  class: string;
-  address: string[];
-};
+   id: number;
+   studentId: string;
+   name: string;
+   email?: string;
+   photo: string;
+   phone?: string;
+   grade: number;
+   class: string;
+   address: string;
+ };
 
 const columns = [
   {
@@ -30,8 +31,8 @@ const columns = [
     className: "hidden md:table-cell",
   },
   {
-    header: "Classes",
-    accessor: "classes",
+    header: "Class",
+    accessor: "class",
     className: "hidden md:table-cell",
   },
   {
@@ -56,6 +57,10 @@ const columns = [
 ];
 
 const StudentListPage = () => {
+ const searchParams = useSearchParams();
+ const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+ const p = page ? parseInt(page) : 1 ;
+ const count = studentsData.length;
   const renderRow = (item: Student) => (
     <tr
       key={item.id}
@@ -129,7 +134,7 @@ const StudentListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={studentsData} />
       {/* PAGINATION */}
       <div className="">
-<Pagination page={1} count={50} />
+<Pagination page={p} count={count} />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import { classesData, role, subjectsData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Class = {
@@ -42,6 +43,10 @@ const columns = [
 ];
 
 const ClassListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = classesData.length;
   const renderRow = (item: Class) => (
     <tr
       key={item.id}
@@ -92,7 +97,7 @@ const ClassListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={classesData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

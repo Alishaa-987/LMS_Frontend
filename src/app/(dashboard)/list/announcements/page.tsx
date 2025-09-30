@@ -5,6 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import {  announcementsData, eventsData, role } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Announcement = {
@@ -38,6 +39,10 @@ const columns = [
 ];
 
 const AnnouncmentListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = announcementsData.length;
   const renderRow = (item: Announcement) => (
     <tr
       key={item.id}
@@ -89,7 +94,7 @@ const AnnouncmentListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={announcementsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

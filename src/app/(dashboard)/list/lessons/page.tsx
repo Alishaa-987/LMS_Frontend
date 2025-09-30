@@ -4,6 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { lessonsData, role, subjectsData } from "@/lib/data";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Lesson = {
@@ -35,6 +36,10 @@ const columns = [
 ];
 
 const LessonListPage = () => {
+  const searchParams = useSearchParams();
+  const {page , ...queryParams} = Object.fromEntries(searchParams.entries());
+  const p = page ? parseInt(page) : 1 ;
+  const count = lessonsData.length;
   const renderRow = (item: Lesson) => (
     <tr
       key={item.id}
@@ -85,7 +90,7 @@ const LessonListPage = () => {
       <Table columns={columns} renderRow={renderRow} data={lessonsData} />
       {/* PAGINATION */}
       <div className="">
-        <Pagination />
+        <Pagination page={p} count={count} />
       </div>
     </div>
   );

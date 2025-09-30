@@ -70,10 +70,10 @@ const renderRow = (item: TeacherList) => (
     <td className="hidden md:table-cell"> {item.phone}</td>
     <td className="hidden md:table-cell"> {item.address}</td>
 
-    <td className="hidden md:table-cell">
+    {/* <td className="hidden md:table-cell">
       {" "}
       {item.subjects.map((subject) => subject.name).join(",")}
-    </td>
+    </td> */}
 
     <td>
       <div className="flex items-center gap-4">
@@ -112,59 +112,62 @@ const TeacherListPage = async ({
             };
             break;
           }
-          case "teacherId": {
-            query.username = value;
+
+          case "search":
+            query.name = { contains: value, mode:"insensitive" }
             break;
-          }
+            default:
+            break;
+        
+        }
+
         }
       }
     }
-  
-};
-const prisma = new PrismaClient();
-const [data, count] = await prisma.$transaction([
-  prisma.teacher.findMany({
-    where:query,
-    include: {
-      subjects: true,
-      classes: true,
-    },
-    take: ITEM_PER_PAGE,
-    skip: ITEM_PER_PAGE * (p - 1),
-  }),
-  prisma.teacher.count({where:query}),
-]);
-return (
-  <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
-    {/* Top */}
-    <div className="flex items-center justify-between">
-      <h1 className="text-lg hidden md:block font-semibold">All Teachers</h1>
-      <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto"></div>
-      <TableSearch />
-      <div className="flex items-center gap-4 self-end">
-        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-          <Image src="/filter.png" alt="" width={14} height={14} />
-        </button>
+    const prisma = new PrismaClient();
+    const [data, count] = await prisma.$transaction([
+      prisma.teacher.findMany({
+        where: query,
+        include: {
+          subjects: true,
+          classes: true,
+        },
+        take: ITEM_PER_PAGE,
+        skip: ITEM_PER_PAGE * (p - 1),
+      }),
+      prisma.teacher.count({ where: query }),
+    ]);
+    return (
+      <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+        {/* Top */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg hidden md:block font-semibold">All Teachers</h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto"></div>
+          <TableSearch />
+          <div className="flex items-center gap-4 self-end">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+              <Image src="/filter.png" alt="" width={14} height={14} />
+            </button>
 
-        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-          <Image src="/sort.png" alt="" width={14} height={14} />
-        </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+              <Image src="/sort.png" alt="" width={14} height={14} />
+            </button>
 
-        {role === "admin" && (
-          // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-          //   <Image src="/plus.png" alt="" width={14} height={14} />
-          // </button>
-          <FormModel table="teacher" type="create" />
-        )}
+            {role === "admin" && (
+              // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+              //   <Image src="/plus.png" alt="" width={14} height={14} />
+              // </button>
+              <FormModel table="teacher" type="create" />
+            )}
+          </div>
+        </div>
+        {/* List */}
+        <Table columns={columns} renderRow={renderRow} data={data} />
+        {/* PAGINATION */}
+        <div className="">
+          <Pagination page={p} count={count} />
+        </div>
       </div>
-    </div>
-    {/* List */}
-    <Table columns={columns} renderRow={renderRow} data={data} />
-    {/* PAGINATION */}
-    <div className="">
-      <Pagination page={p} count={count} />
-    </div>
-  </div>
-);
-}
-export default TeacherListPage;
+    );
+  }
+  export default TeacherListPage;

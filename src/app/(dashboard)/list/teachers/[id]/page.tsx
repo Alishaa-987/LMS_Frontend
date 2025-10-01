@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 const SingleTeacherPage = () => {
-  // Dummy data for now, replace with actual data fetching
   const teacherData = {
     username: "leonard",
     email: "user@gmail.com",
@@ -41,6 +40,7 @@ const SingleTeacherPage = () => {
                 className="w-36 h-36 md:w-36 md:h-36 rounded-full object-cover"
               />
             </div>
+
 
             <div className="w-2/3 flex flex-col  justify-between gap-4 ">
               <h1 className="text-xl font-semibold  ">{teacherData.firstName} {teacherData.lastName}</h1>
@@ -136,7 +136,7 @@ const SingleTeacherPage = () => {
         <div className="bg-white p-4 rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-lamaSky " href="/">
+            <Link className="p-3 rounded-md bg-lamaSky " href={`/list/classes?supervisorId=${"teacher2"}`}>
                Teacher Classes
             </Link>
             <Link className="p-3 rounded-md bg-lamaPurpleLight " href={`list/students?teacherId=${"teacher2"}`}>

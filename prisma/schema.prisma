@@ -20,20 +20,20 @@ model Admin {
 
 model Teacher{
    id         String @id
-  username   String @unique
-  name       String
-  surname    String
-  email      String? @unique
-  phone      String? @unique
-  address    String
-  img        String?
-  bloodType  String
-  sex        UserSex
-  createdAt  DateTime@default(now())
-  birthday   DateTime
-  subjects   Subject[]
-  lessons    Lesson[]
-  classes    Class[]
+   username   String @unique
+   name       String
+   surname    String
+   email      String? @unique
+   phone      String? @unique
+   address    String
+   img        String?
+   bloodType  String
+   sex        UserSex
+   createdAt  DateTime@default(now())
+   birthday   DateTime
+   subjects   Subject[]
+   lessons    Lesson[]
+   classes    Class[]
 }
 model Student{
   id         String @id

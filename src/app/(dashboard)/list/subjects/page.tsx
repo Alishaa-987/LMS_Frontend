@@ -2,19 +2,19 @@ import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, subjectsData } from "@/lib/data";
+import { role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Prisma, PrismaClient, Subject, Teacher } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type SubjectList = Subject & {teachers : Teacher[]}
 
 const columns = [
   {
-    header: "Subject Name",
+    header: "Subject Name", 
     accessor: "info",
   },
   {
@@ -36,7 +36,7 @@ const columns = [
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">{item.name}</div>
       </td>
-      <td className="hidden md:table-cell">{item?.teachers.map(teacher=>teacher.name).join("")}</td>
+      <td className="hidden md:table-cell">{item?.teachers.map(teacher=>teacher.name).join(",")}</td>
 
       <td>
         <div className="flex items-center gap-4">
@@ -51,6 +51,7 @@ const columns = [
       </td>
     </tr>
   );
+
 const SubjectListPage = async ({
   searchParams,
 }: {
@@ -74,7 +75,8 @@ const SubjectListPage = async ({
       }
     }
   }
-  const prisma = new PrismaClient();
+    const prisma = new PrismaClient();
+  
   const [data, count] = await prisma.$transaction([
     prisma.subject.findMany({
       where: query,

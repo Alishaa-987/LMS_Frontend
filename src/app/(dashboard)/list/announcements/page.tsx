@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import {  announcementsData, eventsData, role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Announcement, Prisma, PrismaClient } from "@prisma/client";
+import { Announcement, Class, Prisma, PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 

@@ -92,10 +92,11 @@ const renderRow = (item: StudentList) => (
 const StudentListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  console.log(searchParams);
-  const { page, ...queryParams } = searchParams;
+  const searchParamsResolved = await searchParams;
+  console.log(searchParamsResolved);
+  const { page, ...queryParams } = searchParamsResolved;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION

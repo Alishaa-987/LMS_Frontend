@@ -2,8 +2,9 @@ import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import {  announcementsData, eventsData, role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Announcement, Class, Prisma, PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
@@ -25,10 +26,10 @@ const columns = [
   },
  
 
-  {
+  ...(role === "admin" ? [{
     header: "Actions",
     accessor: "action",
-  },
+  }] :  []),
 ];
  const renderRow = (item: AnnouncementList) => (
     <tr
@@ -58,10 +59,11 @@ const columns = [
 const AnnouncmentListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  console.log(searchParams);
-  const { page, ...queryParams } = searchParams;
+  const searchParamsResolved = await searchParams;
+  console.log(searchParamsResolved);
+  const { page, ...queryParams } = searchParamsResolved;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION

@@ -2,8 +2,8 @@ import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import {  role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
@@ -30,10 +30,11 @@ const columns = [
     accessor: "supervisro",
     className: "hidden md:table-cell",
   },
-  {
-    header: "Actions",
+  ...( role === "admin" ?[
+ {   header: "Actions",
     accessor: "action",
   },
+  ]: []),
 ];
  const renderRow = (item: ClassList) => (
     <tr
@@ -62,9 +63,9 @@ const columns = [
 const ClassListPage  = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { page, ...queryParams } = searchParams;
+  const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION

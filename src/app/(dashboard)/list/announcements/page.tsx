@@ -3,7 +3,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { currentUserId, role } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { Announcement, Class, Prisma, PrismaClient } from "@prisma/client";
 import Image from "next/image";
@@ -39,7 +39,7 @@ const columns = [
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">{item.title}</div>
       </td>
-     <td >{item.class.name}</td>
+     <td >{item.class?.name || "-"}</td>
     <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.date)}</td>
 
        
@@ -83,6 +83,18 @@ const AnnouncmentListPage = async ({
         }
       }
     }
+    // Role Conditions
+      const roleConditions = {
+        teacher:{lessons:{some:{teacherId:currentUserId!}}},
+        student:{students:{some:{id:currentUserId!}}},
+        parent:{students:{some:{parentId:currentUserId!}}},
+      }
+    
+      query.OR = [
+        {classId: null},
+        {class: roleConditions[role as keyof typeof roleConditions] || {},
+      },
+      ];
     const prisma = new PrismaClient();
     const [data, count] = await prisma.$transaction([
       prisma.announcement.findMany({

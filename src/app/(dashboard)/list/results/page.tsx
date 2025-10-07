@@ -8,6 +8,8 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import FormModel from "@/components/FormModel";
+import { currentUserId } from "@/lib/utils";
 
 type ResultList = {
   id: number;
@@ -50,11 +52,10 @@ const columns = [
     accessor: " Date",
     className: "hidden md:table-cell",
   },
-
-  {
+...( role === "admin" || role === "teacher"?[{
     header: "Actions",
     accessor: "action",
-  },
+  }]:[])
 ];
 const renderRow = (item: ResultList) => (
   <tr
@@ -75,15 +76,11 @@ const renderRow = (item: ResultList) => (
     </td>
     <td>
       <div className="flex items-center gap-4">
-        <Link href={`/list/teachers/${item.id}`}>
-          <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
-            <Image src="/edit.png" alt="" width={18} height={28} />
-          </button>
-        </Link>
-        {role === "admin" && (
-          <button className="w-7 flex items-center justify-center rounded-sm bg-lamaPurple">
-            <Image src="/delete.png" alt="" width={18} height={28} />
-          </button>
+        {(role === "admin" || role === "teacher") && (
+          <>
+            <FormModel table="exam" type="update" data={item} />
+            <FormModel table="exam" type="delete" id={item.id} />
+         </>
         )}
       </div>
     </td>
@@ -118,6 +115,30 @@ const ResultListPage = async ({
       }
     }
   }
+
+
+  // ROLE CONDITIONS
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      query.OR =[
+        {exam: {lesson:{teacherId: currentUserId!}}},
+        {assignment: {lesson:{teacherId: currentUserId!}}}
+      ];
+  break;
+  case "student":
+    query.studentId = currentUserId!;
+    break;
+
+    case "parent":
+      query.student = {
+        parentId: currentUserId!,
+      }
+      break;
+    default:
+      break;
+  };
 const [dataRes, count] = await prisma.$transaction([
   prisma.result.findMany({
     where: query,
@@ -203,10 +224,8 @@ return (
           <Image src="/sort.png" alt="" width={14} height={14} />
         </button>
 
-        {role === "admin" && (
-          <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-            <Image src="/plus.png" alt="" width={14} height={14} />
-          </button>
+        {(role === "admin" || role=== "teacher") && (
+         <FormModel table="result" type="create"/>
         )}
       </div>
     </div>

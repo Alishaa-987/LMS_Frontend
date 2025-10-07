@@ -113,7 +113,6 @@ const EventListPage = async ({
     }
   }
 
-  // Role Condition
 
   switch (role) {
     case "admin":
@@ -127,9 +126,7 @@ const EventListPage = async ({
     default:
       break;
   }
-
-
-  //
+  // Role Condition
 
   const roleConditions = {
     teacher:{lessons:{some:{teacherId:currentUserId!}}},

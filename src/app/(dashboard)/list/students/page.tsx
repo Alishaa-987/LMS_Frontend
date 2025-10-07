@@ -2,8 +2,8 @@ import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,10 +41,10 @@ const columns = [
     accessor: "grade",
     className: "hidden md:table-cell",
   },
-  {
+  ...( role === "admin"?[{
     header: "Actions",
     accessor: "action",
-  },
+  }]:[]),
 ];
 const renderRow = (item: StudentList) => (
   <tr
@@ -80,9 +80,6 @@ const renderRow = (item: StudentList) => (
           </button>
         </Link>
         {role === "admin" && (
-          // <button className="w-7 flex items-center justify-center rounded-sm bg-lamaPurple">
-          //   <Image src="/delete.png" alt="" width={18} height={28} />
-          // </button>
           <FormModel table="student" type="delete" id={item.id} />
         )}
       </div>
@@ -154,7 +151,8 @@ const StudentListPage = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && <FormModel table="student" type="create" />}
+          {role === "admin" && 
+          <FormModel table="student" type="create" />}
         </div>
       </div>
       {/* List */}

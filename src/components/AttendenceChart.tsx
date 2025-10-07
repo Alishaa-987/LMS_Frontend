@@ -39,13 +39,9 @@ const data = [
     absent: 10,
   },
 ];
-const AttendenceChart = () => {
+const AttendenceChart = ({data1}:{data1:{name:string, present:number, absent:number} []}) => {
   return (
-    <div className="bg-white rounded-lg p-4 h-full">
-      <div className="flex justify-between items-center">
-        <h1 className="font-semibold text-lg">AttendenceChart</h1>
-        <Image src="/moreDark.png" alt="" width={20} height={20} />
-      </div>
+   
       <ResponsiveContainer width="100%" height="90%">
         <BarChart width={500} height={300} data={data} barSize={20}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
@@ -78,7 +74,6 @@ const AttendenceChart = () => {
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
   );
 };
 

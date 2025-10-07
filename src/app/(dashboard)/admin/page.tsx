@@ -1,8 +1,9 @@
 import Announcements from "@/components/Announcements";
 import AttendenceChart from "@/components/AttendenceChart";
-import CountChart from "@/components/CountChart";
+import AttendenceChartContains from "@/components/AttendenceChartContains";
 import EventCalender from "@/components/EventCalender";
 import FinanceChart from "@/components/FinanceChart";
+import CountChartContainer from "@/components/forms/CountChartContainer";
 import UserCard from "@/components/UserCard";
 import React from "react";
 
@@ -15,19 +16,19 @@ function AdminPage() {
           {/* UserCard */}
           <UserCard type="parent" />
           <UserCard type="student" />
-          <UserCard type="staff" />
+          <UserCard type="admin" />
           <UserCard type="teacher" />
         </div>
         {/* Middle Chart */}
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* Counter Chart */}
           <div className="w-full lg:w-1/3 h-[450px]">
-            <CountChart />
+            <CountChartContainer />
           </div>
 
           {/* Attendance Chart */}
           <div className="w-full lg:w-2/3 h-[450px]">
-            <AttendenceChart />
+            <AttendenceChartContains />
           </div>
         </div>
         {/* Bottom Chart */}

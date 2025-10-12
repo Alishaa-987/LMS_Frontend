@@ -30,9 +30,12 @@ type Inputs = z.infer<typeof schema>;
 const StudentForm = ({
     type,
     data,
+    setOpen,
+
 }: {
     type: "create" | "update";
     data?: any;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const {
         register,

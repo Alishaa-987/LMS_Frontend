@@ -2,13 +2,13 @@ import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { prisma } from "@/lib/prisma";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
+import { role } from "@/lib/utils";
 
 type SubjectList = Subject & {teachers : Teacher[]}
 

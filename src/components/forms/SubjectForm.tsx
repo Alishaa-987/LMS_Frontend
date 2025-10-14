@@ -41,6 +41,7 @@ const SubjectForm = ({
     }
   );
 
+
   const router = useRouter();
 
   const onSubmit = handleSubmit((data) => {
@@ -50,6 +51,7 @@ const SubjectForm = ({
     formAction(data);
     });
   });
+
   useEffect(() => {
     if (state.success) {
       toast(
@@ -59,6 +61,9 @@ const SubjectForm = ({
       router.refresh();
     }
   }, [state, type, router, setOpen]);
+
+
+
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>

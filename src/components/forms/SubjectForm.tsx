@@ -45,10 +45,8 @@ const SubjectForm = ({
   const router = useRouter();
 
   const onSubmit = handleSubmit((data) => {
-    console.log("Form data being submitted:", data);
-    console.log("Form type:", type);
     startTransition(() => {
-    formAction(data);
+      formAction(data);
     });
   });
 
@@ -63,8 +61,6 @@ const SubjectForm = ({
   }, [state, type, router, setOpen]);
 
 
-
-
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
@@ -73,7 +69,7 @@ const SubjectForm = ({
 
       <div className="flex justify-between flex-wrap gap-4">
         {type === "update" && (
-          <input type="hidden" {...register("id")} defaultValue={data?.id} />
+          <input type="hidden" {...register("id", { value: data?.id })} />
         )}
         <InputField
           label=" Subject Name"
@@ -87,7 +83,7 @@ const SubjectForm = ({
       {state.error && (
         <span className="text-red-500">Something went wrong!</span>
       )}
-      <button className="bg-blue-400 text-white p-2 rounded-md">
+      <button type="submit" className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
     </form>

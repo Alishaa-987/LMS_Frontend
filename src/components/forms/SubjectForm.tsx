@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { startTransition, useActionState, useEffect } from "react";
+import React, { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
@@ -20,17 +20,29 @@ const SubjectForm = ({
   type,
   data,
   setOpen,
+  relatedData
 }: {
   type: "create" | "update";
   data?: any;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  relatedData?:any;
 }) => {
+  const [selectedTeachers, setSelectedTeachers] = useState<string[]>(
+    data?.teachers?.map((t: any) => t.id) || []
+  );
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<z.infer<typeof subjectschema>>({
     resolver: zodResolver(subjectschema),
+    defaultValues: {
+      name: data?.name || "",
+      teachers: selectedTeachers,
+      id: data?.id,
+    },
   });
 
   const [state, formAction] = useActionState(
@@ -41,45 +53,83 @@ const SubjectForm = ({
     }
   );
 
-
   const router = useRouter();
 
   const onSubmit = handleSubmit((data) => {
     startTransition(() => {
-      formAction(data);
+      const formData = new FormData();
+      formData.append('name', data.name);
+      selectedTeachers.forEach(teacher => formData.append('teachers', teacher));
+      if (data.id) formData.append('id', data.id.toString());
+      formAction(formData);
     });
   });
 
   useEffect(() => {
     if (state.success) {
-      toast(
-        `Subject has been ${type === "create" ? "created" : "updated"} successfully!`
+      toast.success(
+        `Subject has been ${
+          type === "create" ? "created" : "updated"
+        } successfully!`
       );
       setOpen(false);
       router.refresh();
+    } else if (state.error) {
+      toast.error("Something went wrong!");
     }
-  }, [state, type, router, setOpen]);
+  }, [state.success, state.error, type, router, setOpen]);
 
+  const {teachers} = relatedData;
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="flex flex-col gap-8">
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new subject" : "Update subject"}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         {type === "update" && (
-          <input type="hidden" {...register("id", { value: data?.id })} />
+          <input type="hidden" {...register("id")} value={data?.id} />
         )}
         <InputField
-          label=" Subject Name"
+          label="Subject Name"
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors?.name}
           inputProps={{}}
         />
+
+    {   data &&   <input
+          type="hidden"
+          {...register("id")}
+          defaultValue={data?.id}
+        />}
+
+          <div className="flex flex-col gap-2 w-full md:w-1/4">
+           <label className="text-xs text-gray-500">Teachers</label>
+           <select
+             multiple
+             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+             value={selectedTeachers}
+             onChange={(e) => {
+               const values = Array.from(e.target.selectedOptions, option => option.value);
+               setSelectedTeachers(values);
+               setValue("teachers", values);
+             }}
+           >
+             {teachers.map((teacher :{id: string ;  name: string; surname: string}) => (
+               <option key={teacher.id}  value={teacher.id}>{teacher.name + " " + teacher.surname} </option>
+             ))}
+           </select>
+           {errors.teachers?.message && (
+             <p className="text-red-400 text-xs">
+               {errors.teachers.message.toString()}
+             </p>
+           )}
+         </div>
       </div>
+
       {state.error && (
         <span className="text-red-500">Something went wrong!</span>
       )}

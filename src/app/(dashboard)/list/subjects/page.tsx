@@ -9,6 +9,7 @@ import { Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import { role } from "@/lib/utils";
+import FormContainer from "@/components/forms/FormContainer";
 
 type SubjectList = Subject & {teachers : Teacher[]}
 
@@ -43,8 +44,8 @@ const columns = [
           
           {role === "admin" && (
             <>
-              <FormModel table="subject" type="update" data={item} />
-              <FormModel table="subject" type="delete" id={item.id} />
+              <FormContainer table="subject" type="update" data={item} />
+              <FormContainer table="subject" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -106,7 +107,8 @@ const SubjectListPage = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && <FormModel table="subject" type="create" />}
+          {role === "admin" 
+          && <FormModel table="subject" type="create" />}
         </div>
       </div>
       {/* List */}

@@ -14,8 +14,8 @@ const schema = z.object({
 
   email: z.string().email({ message: "Invalid email address" }),
   password: z
-  .string()
-  .min(8, { message: "password must be atleast 8 character long" }),
+    .string()
+    .min(8, { message: "password must be atleast 8 character long" }),
   firstName: z.string().min(1, { message: "First Name is required" }),
   lastName: z.string().min(1, { message: "Last name is required" }),
   phone: z.string().min(1, { message: "Phone is required" }),
@@ -31,12 +31,10 @@ const TeacherForm = ({
   type,
   data,
   setOpen,
-
 }: {
   type: "create" | "update";
   data?: any;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  
 }) => {
   const {
     register,
@@ -52,7 +50,9 @@ const TeacherForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">{type === "create" ? "Create a new teacher" : "Update teacher"}</h1>
+      <h1 className="text-xl font-semibold">
+        {type === "create" ? "Create a new teacher" : "Update teacher"}
+      </h1>
       <span className="text-xs text-gray-400 font-medium">
         Authentication Infomration
       </span>
@@ -143,37 +143,39 @@ const TeacherForm = ({
           type="date"
           inputProps={{}}
         />
- <div className="flex flex-col gap-2 w-full md:w-1/4">
-        <label className="text-xs text-gray-500">Sex</label>
-        <select
-          className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-          {...register("sex")}
-          defaultValue={data?.sex}
-        >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-        {errors.sex?.message && (
-          <p className="text-red-400 text-xs">
-            {errors.sex.message.toString()}
-          </p>
-        )}
-      </div>
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Sex</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("sex")}
+            defaultValue={data?.sex}
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+          {errors.sex?.message && (
+            <p className="text-red-400 text-xs">
+              {errors.sex.message.toString()}
+            </p>
+          )}
+        </div>
 
         <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
-        <label className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer" htmlFor="img">
-            <Image src="/upload.png" alt="" width={28} height={28} id="img"/>
+          <label
+            className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+            htmlFor="img"
+          >
+            <Image src="/upload.png" alt="" width={28} height={28} id="img" />
             <span>Upoad a photo</span>
-        </label>
-        <input type="file" {...register("img")} className="hidden"/>
-        {errors.img?.message && (
-          <p className="text-red-400 text-xs">
-            {errors.img.message.toString()}
-          </p>
-        )}
+          </label>
+          <input type="file" {...register("img")} className="hidden" />
+          {errors.img?.message && (
+            <p className="text-red-400 text-xs">
+              {errors.img.message.toString()}
+            </p>
+          )}
+        </div>
       </div>
-</div>
-     
 
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}

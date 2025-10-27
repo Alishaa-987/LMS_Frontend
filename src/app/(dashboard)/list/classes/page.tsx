@@ -1,4 +1,5 @@
 import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -8,7 +9,7 @@ import { Class, Prisma, PrismaClient, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 
-type ClassList = Class & {supervisor: Teacher}
+type ClassList = Class & {supervisor: Teacher, grade: any}
 
 const columns = [
   {
@@ -45,15 +46,15 @@ const columns = [
         <div className="flex flex-col">{item.name}</div>
       </td>
       <td className="hidden md:table-cell">{item?.capacity}</td>
-      <td className="hidden md:table-cell">{item.name[0]}</td>
+      <td className="hidden md:table-cell">{item?.grade?.level}</td>
       <td className="hidden md:table-cell">{item?.supervisor.name + " " + item.supervisor.surname}</td>
 
       <td>
         <div className="flex items-center gap-4">
           {role === "admin" && (
             <>
-              <FormModel table="class" type="update" data={item} />
-              <FormModel table="class" type="delete" id={item.id} />
+              <FormContainer table="class" type="update" data={item} />
+              <FormContainer table="class" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -93,6 +94,7 @@ const ClassListPage  = async ({
       where: query,
       include: {
         supervisor: true,
+        grade: true,
       },
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
@@ -119,7 +121,7 @@ const ClassListPage  = async ({
           </button>
 
           {role === "admin" && (
-              <FormModel table="class" type="create" />
+              <FormContainer table="class" type="create" />
 
           )}
         </div>

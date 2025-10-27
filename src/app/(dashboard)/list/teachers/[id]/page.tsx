@@ -1,6 +1,7 @@
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
 import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/forms/FormContainer";
 import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,7 +30,7 @@ const SingleTeacherPage = () => {
           {/* USER CARD INFO */}
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4 relative">
             <div className="absolute top-4 right-4">
-              <FormModel table="teacher" type="update" data={teacherData} />
+              <FormContainer table="teacher" type="update" data={teacherData} />
             </div>
             <div className="w-full md:w-1/3 flex justify-center md:justify-start ">
               <Image

@@ -1,10 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { startTransition, useActionState, useEffect } from "react";
+import { FieldError, useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
+import { classSchema, ClassSchema } from "@/lib/FormValidationSchema";
+import { createClass, updateClass } from "@/lib/actions";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -17,22 +21,66 @@ type Inputs = z.infer<typeof schema>;
 const ClassForm = ({
   type,
   data,
+  setOpen,
+  relatedData,
 }: {
   type: "create" | "update";
   data?: any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  relatedData?: any;
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
-    resolver: zodResolver(schema),
+  } = useForm({
+    resolver: zodResolver(classSchema),
+    defaultValues: {
+      name: data?.name || "",
+    capacity: Number(data?.capacity) || 0,
+    gradeId: Number(data?.gradeId) || 0,
+      supervisorId: data?.supervisorId || "",
+      id: data?.id,
+    },
   });
+
+  const [state, formAction] = useActionState(
+    type === "create" ? createClass : updateClass,
+    {
+      success: false,
+      error: false,
+    }
+  );
+
+  const router = useRouter();
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
+    startTransition(() => {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("capacity", data.capacity.toString());
+      formData.append("gradeId", String(Number(data.gradeId)));
+      if (data.supervisorId) formData.append("supervisorId", data.supervisorId);
+      if (data.id) formData.append("id", data.id.toString());
+      formAction(formData);
+    });
   });
 
+  useEffect(() => {
+    if (state.success) {
+      toast.success(
+        `Class has been ${
+          type === "create" ? "created" : "updated"
+        } successfully!`
+      );
+      setOpen(false);
+      router.refresh();
+    } else if (state.error) {
+      toast.error("Something went wrong!");
+    }
+  }, [state.success, state.error, type, router, setOpen]);
+
+  const { teachers, grades } = relatedData || {};
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
@@ -42,6 +90,9 @@ const ClassForm = ({
         Class Information
       </span>
       <div className="flex justify-between flex-wrap gap-4">
+        {type === "update" && (
+          <input type="hidden" {...register("id")} defaultValue={data?.id} />
+        )}
         <InputField
           label="Name"
           name="name"
@@ -55,19 +106,59 @@ const ClassForm = ({
           name="capacity"
           defaultValue={data?.capacity}
           register={register}
-          error={errors?.capacity}
+          error={errors?.capacity as FieldError | undefined}
           inputProps={{}}
         />
-        <InputField
-          label="Grade Level"
-          name="gradeLevel"
-          defaultValue={data?.gradeLevel}
-          register={register}
-          error={errors?.gradeLevel}
-          inputProps={{}}
-        />
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Grade Level</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("gradeId")}
+            defaultValue={data?.gradeId}
+          >
+            <option value="">Select Grade</option>
+            {relatedData?.grades?.map(
+              (grade: { id: number; level: number }) => (
+                <option key={grade.id} value={grade.id} selected={data && grade.id === data.gradeId}>
+                  {grade.level}
+                </option>
+              )
+            )}
+          </select>
+          {errors.gradeId?.message && (
+            <p className="text-red-400 text-xs">
+              {errors.gradeId.message.toString()}
+            </p>
+          )}
+        </div>
       </div>
-      <button className="bg-blue-400 text-white p-2 rounded-md">
+      <div className="flex flex-col gap-2 w-full md:w-1/4">
+        <label className="text-xs text-gray-500">Supervisor</label>
+        <select
+          className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+          {...register("supervisorId")}
+          defaultValue={data?.supervisorId}
+        >
+          <option value="">Select Supervisor</option>
+          {relatedData?.teachers?.map(
+            (teacher: { id: string; name: string; surname: string }) => (
+              <option key={teacher.id} value={teacher.id} selected={data && teacher.id === data.supervisorId}>
+                {teacher.name + " " + teacher.surname}
+              </option>
+            )
+          )}
+        </select>
+        {errors.supervisorId?.message && (
+          <p className="text-red-400 text-xs">
+            {errors.supervisorId.message.toString()}
+          </p>
+        )}
+      </div>
+
+      {state.error && (
+        <span className="text-red-500">Something went wrong!</span>
+      )}
+      <button type="submit" className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
     </form>

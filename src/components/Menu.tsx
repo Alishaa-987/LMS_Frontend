@@ -118,8 +118,8 @@ const menuItems = [
 
 const Menu = async () => {
 
-  const user = await currentUser()
-  const role = user?.publicMetadata.role as string;
+  const user = await currentUser();
+  const role = user?.publicMetadata?.role as string || "admin";
 
   return (
     <div className="mt-4 text-sm">

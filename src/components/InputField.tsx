@@ -1,12 +1,12 @@
 import React from 'react'
-import { FieldError } from 'react-hook-form'
+import { FieldError, Merge, FieldErrorsImpl } from 'react-hook-form'
 type InputFieldProps={
     label:string;
     type?:string;
     register:any;
     name:string;
     defaultValue?:string;
-    error?:FieldError;
+    error?:FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
     hidden?: boolean;
     inputProps:React.InputHTMLAttributes<HTMLInputElement>
 

@@ -1,6 +1,6 @@
-import React from 'react'
-import FormModel from '../FormModel';
-import { prisma } from '@/lib/prisma';
+import React from "react";
+import FormModel from "../FormModel";
+import { prisma } from "@/lib/prisma";
 export type FormContainerProps = {
   table:
     | "teacher"
@@ -20,31 +20,72 @@ export type FormContainerProps = {
   id?: number | string;
 };
 
-const FormContainer= async ({table,type,data,id}: FormContainerProps) => {
+const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
+  let relatedData = {};
 
-    let relatedData = {}
+  if (type != "delete") {
+    switch (table) {
+      case "subject":
+        const subjectTeachers = await prisma.teacher.findMany({
+          select: {
+            id: true,
+            name: true,
+            surname: true,
+          },
+        });
+        relatedData = { teachers: subjectTeachers };
+        break;
 
-    if(type !="delete"){
-        switch (table){
-            case "subject":
-            
-            const subjectTeachers = await prisma.teacher.findMany({
-                select:{
-                    id:true,name:true,surname:true
-                }
+        case "class":
+        const classGrades = await prisma.grade.findMany({
+          select: {
+            id: true,
+            level: true,      
+          },
+        });
 
-            });
-            relatedData = {teachers:subjectTeachers}
-            break;
-            default:
-                break;
-        }
+
+        const classTeachers = await prisma.teacher.findMany({
+        select: {
+            id: true,
+            name: true,   
+            surname: true,   
+          },
+        });
+        relatedData = { teachers: classTeachers , grades: classGrades };
+        break;
+
+
+
+         case "teacher":
+        const teacherSubjects = await prisma.subject.findMany({
+          select: {
+            id: true,
+            name: true,
+          },
+        });
+
+
+      
+        relatedData = { subjects: teacherSubjects };
+        break;
+
+
+      default:
+        break;
     }
+  }
   return (
     <div>
-        <FormModel table={table} type={type} data={data} id={id} relatedData = {relatedData}/>
-        </div>
-  )
-}
+      <FormModel
+        table={table}
+        type={type}
+        data={data}
+        id={id}
+        relatedData={relatedData}
+      />
+    </div>
+  );
+};
 
-export default FormContainer
+export default FormContainer;

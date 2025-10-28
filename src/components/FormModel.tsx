@@ -161,6 +161,8 @@ const FormModel = ({
       ? "bg-lamaSky"
       : "bg-lamaPurple";
 
+  const iconSrc = type === "create" ? "/create.png" : type === "update" ? "/update.png" : `/${type}.png`;
+
   const [open, setOpen] = useState(false);
   const Form = () => {
     const [state, formAction] = useActionState(deleteActionMap[table], {
@@ -191,9 +193,9 @@ const FormModel = ({
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](setOpen, type, data, relatedData)
+      forms[table]?.(setOpen, type, data, relatedData) || <div>Form not found for {table}</div>
     ) : (
-      "Form not found!"
+      <div>Unsupported operation</div>
     );
   };
   return (
@@ -202,7 +204,7 @@ const FormModel = ({
         className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
         onClick={() => setOpen(true)}
       >
-        <Image src={`/${type}.png`} alt="" width={16} height={16} />
+        <Image src={iconSrc} alt="" width={16} height={16} />
       </button>
       {open && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">

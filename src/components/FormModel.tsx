@@ -103,7 +103,7 @@ const forms: {
       type={type}
       data={data}
       setOpen={setOpen}
-      // relatedData={relatedData}
+      relatedData={relatedData}
     />
   ),
   parent: (setOpen, type, data, relatedData) => (
@@ -182,21 +182,25 @@ const FormModel = ({
       }
     }, [state, router]);
 
-    return type === "delete" && id ? (
-      <form action={formAction} className="p-4 flex flex-col gap-4">
-        <input type="hidden" name="id" value={id} />
-        <span className="text-center font-medium">
-          All data will be lost. Are you sure you want to delete this {table}?
-        </span>
-        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
-          Delete
-        </button>
-      </form>
-    ) : type === "create" || type === "update" ? (
-      forms[table]?.(setOpen, type, data, relatedData) || <div>Form not found for {table}</div>
-    ) : (
-      <div>Unsupported operation</div>
-    );
+    if (type === "delete") {
+      return id ? (
+        <form action={formAction} className="p-4 flex flex-col gap-4">
+          <input type="hidden" name="id" value={id} />
+          <span className="text-center font-medium">
+            All data will be lost. Are you sure you want to delete this {table}?
+          </span>
+          <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
+            Delete
+          </button>
+        </form>
+      ) : (
+        <div>ID is required for delete operation</div>
+      );
+    } else if (type === "create" || type === "update") {
+      return forms[table]?.(setOpen, type, data, relatedData) || <div>Form not found for {table}</div>;
+    } else {
+      return <div>Unsupported operation: {type}</div>;
+    }
   };
   return (
     <>

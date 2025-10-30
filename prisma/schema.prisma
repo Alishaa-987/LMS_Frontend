@@ -28,7 +28,7 @@ model Teacher{
    address    String
    img        String?
    bloodType  String
-   sex        UserSex
+   sex        UserSex ?
    createdAt  DateTime@default(now())
    birthday   DateTime
    subjects   Subject[]

@@ -1,13 +1,25 @@
-import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+const role = "admin"; // Temporary fix
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+// import { role } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+
+export async function getRole() {
+  const { sessionClaims } = await auth();
+  return (sessionClaims?.metadata as { role?: string })?.role;
+}
+
+export async function getCurrentUserId() {
+  const { userId } = await auth();
+  return userId;
+}
 
 type StudentList = Student & { class: Class };
 
@@ -52,15 +64,19 @@ const renderRow = (item: StudentList) => (
     className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">
-      <Image
-        src={item.img || "/noAvatar.png"}
-        alt=""
-        width={40}
-        height={40}
-        className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
-      />
+      <Link href={`/list/students/${item.id}`}>
+        <Image
+          src={item.img || "/noAvatar.png"}
+          alt=""
+          width={40}
+          height={40}
+          className="md:hidden xl:block w-10 h-10 rounded-full object-cover cursor-pointer"
+        />
+      </Link>
       <div className="flex flex-col">
-        <h3 className="font-semibold">{item.name}</h3>
+        <Link href={`/list/students/${item.id}`}>
+          <h3 className="font-semibold cursor-pointer hover:text-blue-600">{item.name}</h3>
+        </Link>
         <p className="text-xs text-gray-500">{item?.email}</p>
       </div>
     </td>
@@ -75,12 +91,15 @@ const renderRow = (item: StudentList) => (
     <td>
       <div className="flex items-center gap-4">
         <Link href={`/list/students/${item.id}`}>
-          <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
-            <Image src="/edit.png" alt="" width={18} height={28} />
+          <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaSky hover:bg-lamaSkyLight transition-colors">
+            <Image src="/view.png" alt="View" width={20} height={20} />
           </button>
         </Link>
         {role === "admin" && (
-          <FormModel table="student" type="delete" id={item.id} />
+          <>
+            <FormContainer table="student" type="update" data={item} />
+            <FormContainer table="student" type="delete" id={item.id} />
+          </>
         )}
       </div>
     </td>
@@ -151,8 +170,9 @@ const StudentListPage = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && 
-          <FormModel table="student" type="create" />}
+          {role === "admin" && (
+            <FormContainer table="student" type="create" />
+          )}
         </div>
       </div>
       {/* List */}

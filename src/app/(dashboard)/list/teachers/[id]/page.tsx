@@ -1,5 +1,4 @@
 import Announcements from "@/components/Announcements";
-import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/forms/FormContainer";
 import Performance from "@/components/Performance";
@@ -49,13 +48,13 @@ const SingleTeacherPage = async ({ params }: { params: Promise<{ id: string }> }
                 />
               )}
             </div>
-            <div className="w-full md:w-1/3 flex justify-center md:justify-start ">
+            <div className="w-full md:w-1/3 flex justify-center md:justify-start mt-4">
               <Image
                 src={teacher.img  || '/noAvatar.png'}
                 alt=""
-                width={144}
-                height={144}
-                className="w-36 h-36 md:w-36 md:h-36 rounded-full object-cover"
+                width={146}
+                height={146}
+                className="w-38 h-38 md:w-36 md:h-36 rounded-full object-cover"
               />
             </div>
 

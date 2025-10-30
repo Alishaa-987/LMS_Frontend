@@ -188,6 +188,11 @@ const TeacherForm = ({
           type="date"
           inputProps={{}}
         />
+
+        {data && (
+          <input type="hidden" {...register("id")} defaultValue={data?.id} />
+        )}
+
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Sex</label>
           <select
@@ -228,11 +233,11 @@ const TeacherForm = ({
               )
             )}
           </select>
-          {errors.sex?.message && (
+          {/* {errors.sex?.message && (
             <p className="text-red-400 text-xs">
               {errors.sex.message.toString()}
             </p>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col gap-2 w-full md:w-1/4">
@@ -250,7 +255,13 @@ const TeacherForm = ({
                   className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
                   onClick={() => open?.()}
                 >
-                  <Image src="/upload.png" alt="" width={28} height={28} id="img" />
+                  <Image
+                    src="/upload.png"
+                    alt=""
+                    width={28}
+                    height={28}
+                    id="img"
+                  />
                   <span>Upload a photo</span>
                 </div>
               );
@@ -258,7 +269,7 @@ const TeacherForm = ({
           </CldUploadWidget>
         </div>
       </div>
-{state.error && (
+      {state.error && (
         <span className="text-red-500">Something went wrong!</span>
       )}
       <button className="bg-blue-400 text-white p-2 rounded-md">

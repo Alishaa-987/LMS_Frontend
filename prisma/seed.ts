@@ -85,11 +85,12 @@ async function main() {
     });
   }
 
-  // LESSON - commented out to avoid constraint issues
-  /*
+  // LESSON
   for (let i = 1; i <= 30; i++) {
-    await prisma.lesson.create({
-      data: {
+    await prisma.lesson.upsert({
+      where: { id: i },
+      update: {},
+      create: {
         name: `Lesson${i}`,
         day: Day[
           Object.keys(Day)[
@@ -104,50 +105,133 @@ async function main() {
       },
     });
   }
-  */
 
-  // PARENT - commented out to avoid constraint issues
-  /*
+  // PARENT
   for (let i = 1; i <= 25; i++) {
-    await prisma.parent.create({
-      data: {
-        id: `parentId${i}`,
-        username: `parentId${i}`,
-        name: `PName ${i}`,
-        surname: `PSurname ${i}`,
+    await prisma.parent.upsert({
+      where: { id: `parent${i}` },
+      update: {},
+      create: {
+        id: `parent${i}`,
+        username: `parent${i}`,
+        name: `PName${i}`,
+        surname: `PSurname${i}`,
         email: `parent${i}@example.com`,
         phone: `123-456-789${i}`,
         address: `Address${i}`,
       },
     });
   }
-  */
 
-  // STUDENT - commented out to avoid constraint issues
-  /*
+  // STUDENT
   for (let i = 1; i <= 50; i++) {
-    await prisma.student.create({
-      data: {
+    await prisma.student.upsert({
+      where: { id: `student${i}` },
+      update: {},
+      create: {
         id: `student${i}`,
         username: `student${i}`,
         name: `SName${i}`,
-        surname: `SSurname ${i}`,
+        surname: `SSurname${i}`,
         email: `student${i}@example.com`,
         phone: `987-654-321${i}`,
         address: `Address${i}`,
         bloodType: "O-",
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
-        parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
+        parentId: `parent${Math.ceil(i / 2) % 25 || 25}`,
         gradeId: (i % 6) + 1,
         classId: (i % 6) + 1,
         birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
       },
     });
   }
-  */
 
-  // Commented out remaining sections to focus on core data
-  console.log("Core data seeded successfully");
+  // EXAM
+  for (let i = 1; i <= 10; i++) {
+    await prisma.exam.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        title: `Exam${i}`,
+        startTime: new Date(new Date().setHours(new Date().getHours() + 1)),
+        endTime: new Date(new Date().setHours(new Date().getHours() + 3)),
+        lessonId: (i % 30) + 1,
+      },
+    });
+  }
+
+  // ASSIGNMENT
+  for (let i = 1; i <= 10; i++) {
+    await prisma.assignment.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        title: `Assignment${i}`,
+        startDate: new Date(),
+        dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+        lessonId: (i % 30) + 1,
+      },
+    });
+  }
+
+  // RESULT
+  for (let i = 1; i <= 10; i++) {
+    await prisma.result.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        score: Math.floor(Math.random() * 100) + 1,
+        examId: (i % 10) + 1,
+        assignmentId: (i % 10) + 1,
+        studentId: `student${(i % 50) + 1}`,
+      },
+    });
+  }
+
+  // ATTENDANCE
+  for (let i = 1; i <= 50; i++) {
+    await prisma.attendance.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        date: new Date(),
+        present: Math.random() > 0.2, // 80% present rate
+        studentId: `student${i}`,
+        lessonId: (i % 30) + 1,
+      },
+    });
+  }
+
+  // EVENT
+  for (let i = 1; i <= 5; i++) {
+    await prisma.event.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        title: `Event${i}`,
+        description: `Description for Event${i}`,
+        startTime: new Date(new Date().setHours(new Date().getHours() + 1)),
+        endTime: new Date(new Date().setHours(new Date().getHours() + 3)),
+        classId: (i % 6) + 1,
+      },
+    });
+  }
+
+  // ANNOUNCEMENT
+  for (let i = 1; i <= 5; i++) {
+    await prisma.announcement.upsert({
+      where: { id: i },
+      update: {},
+      create: {
+        title: `Announcement${i}`,
+        description: `Description for Announcement${i}`,
+        date: new Date(),
+        classId: (i % 6) + 1,
+      },
+    });
+  }
+
+  console.log("All data seeded successfully");
 
   console.log("Seeding completed successfully.");
 }

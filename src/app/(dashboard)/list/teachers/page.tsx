@@ -14,7 +14,7 @@ import FormContainer from "@/components/forms/FormContainer";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
-const columns = [
+const getColumns = (role?: string) => [
   {
     header: "Info",
     accessor: "info",
@@ -39,7 +39,7 @@ const columns = [
     accessor: "address",
     className: "hidden md:table-cell",
   },
- ...( role === "admin"?[{
+  ...( role === "admin"?[{
     header: "Actions",
     accessor: "action",
   }]:[]),
@@ -83,14 +83,14 @@ const renderRow = (item: TeacherList, role?: string) => (
     <td>
       <div className="flex items-center gap-4">
         <Link href={`/list/teachers/${item.id}`}>
-          <button className="w-7 flex items-center justify-center rounded-sm bg-lamaSky">
+          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
             <Image src="/view.png" alt="" width={16} height={16} />
           </button>
         </Link>
         {role === "admin" && (
           <>
             <FormContainer table="teacher" type="update" data={item} />
-            <FormContainer table="teacher" type="delete" id={Number(item.id)} />
+            <FormContainer table="teacher" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -173,7 +173,7 @@ const TeacherListPage = async ({
           </div>
         </div>
         {/* List */}
-        <Table columns={columns} renderRow={(item) => renderRow(item, role)} data={data} />
+        <Table columns={getColumns(role)} renderRow={(item) => renderRow(item, role)} data={data} />
         {/* PAGINATION */}
         <div className="">
           <Pagination page={p} count={count} />

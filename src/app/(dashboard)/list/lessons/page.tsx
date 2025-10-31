@@ -1,10 +1,11 @@
 import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Lesson } from "@/generated/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { getRole } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -27,10 +28,10 @@ const columns = [
     className: "hidden md:table-cell",
   },
 
-...( role === "admin" ?[  {
-    header: "Actions",
-    accessor: "action",
-  },]:[])
+...( true ?[  {
+  header: "Actions",
+  accessor: "action",
+},]:[])
 ];
 const renderRow = (item: LessonList) => (
     <tr
@@ -45,11 +46,11 @@ const renderRow = (item: LessonList) => (
 
       <td>
         <div className="flex items-center gap-4">
-          {role === "admin" && (
+          {true && (
             <>
-              <FormModel table="lesson" type="update" data={item} />
+              <FormContainer table="lesson" type="update" data={item} />
 
-              <FormModel table="lesson" type="delete" id={item.id} />
+              <FormContainer table="lesson" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -59,9 +60,11 @@ const renderRow = (item: LessonList) => (
 const LessonListPage  = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { page, ...queryParams } = searchParams;
+  const role = await getRole();
+  const searchParamsResolved = await searchParams;
+  const { page, ...queryParams } = searchParamsResolved;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
@@ -73,7 +76,7 @@ const LessonListPage  = async ({
           case "classId":
             query.classId = parseInt(value);
             break;
-             case "teacherId":
+              case "teacherId":
             query.teacherId =value;
             break;
           case "search":
@@ -124,8 +127,8 @@ const LessonListPage  = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && (
-             <FormModel table="lesson" type="create"/>
+          {true && (
+             <FormContainer table="lesson" type="create"/>
 
           )}
         </div>

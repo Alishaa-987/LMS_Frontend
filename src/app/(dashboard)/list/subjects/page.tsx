@@ -8,28 +8,38 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
-import { role } from "@/lib/utils";
+import { getRole } from "@/lib/utils";
 import FormContainer from "@/components/forms/FormContainer";
 
 type SubjectList = Subject & {teachers : Teacher[]}
 
-const columns = [
-  {
-    header: "Subject Name", 
-    accessor: "info",
-  },
-  {
-    header: "Teachers",
-    accessor: "Teachers",
-    className: "hidden md:table-cell",
-  },
+const SubjectListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const searchParamsResolved = await searchParams;
+  const { page, ...queryParams } = searchParamsResolved;
+  const p = page ? parseInt(page) : 1;
 
-  {
-    header: "Actions",
-    accessor: "action",
-  },
-];
- const renderRow = (item: SubjectList) => (
+  const role = await getRole();
+
+  const columns = [
+    {
+      header: "Subject Name",
+      accessor: "info",
+    },
+    {
+      header: "Teachers",
+      accessor: "Teachers",
+    },
+    {
+      header: "Actions",
+      accessor: "action",
+    },
+  ];
+
+  const renderRow = (item: SubjectList) => (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
@@ -37,11 +47,11 @@ const columns = [
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">{item.name}</div>
       </td>
-      <td className="hidden md:table-cell">{item?.teachers.map(teacher=>teacher.name).join(",")}</td>
+      <td className="hidden md:table-cell">{item?.teachers.map((teacher: Teacher) => teacher.name + " " + teacher.surname).join(", ")}</td>
 
       <td>
         <div className="flex items-center gap-4">
-          
+
           {role === "admin" && (
             <>
               <FormContainer table="subject" type="update" data={item} />
@@ -52,14 +62,6 @@ const columns = [
       </td>
     </tr>
   );
-
-const SubjectListPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
-}) => {
-  const { page, ...queryParams } = await searchParams;
-  const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
   const query: Prisma.SubjectWhereInput = {};
@@ -77,7 +79,7 @@ const SubjectListPage = async ({
     }
   }
     const prisma = new PrismaClient();
-  
+
   const [data, count] = await prisma.$transaction([
     prisma.subject.findMany({
       where: query,
@@ -90,7 +92,7 @@ const SubjectListPage = async ({
     prisma.subject.count({ where: query }),
   ]);
 
- 
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* Top */}
@@ -107,8 +109,8 @@ const SubjectListPage = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" 
-          && <FormModel table="subject" type="create" />}
+          {role === "admin"
+          && <FormContainer table="subject" type="create" />}
         </div>
       </div>
       {/* List */}

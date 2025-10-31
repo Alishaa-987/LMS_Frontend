@@ -16,7 +16,7 @@ const schema = z.object({
   gradeLevel: z.string().min(1, { message: "Grade Level is required" }),
 });
 
-type Inputs = z.infer<typeof schema>;
+type Inputs = z.infer<ClassSchema>;
 
 const ClassForm = ({
   type,
@@ -54,18 +54,6 @@ const ClassForm = ({
 
   const router = useRouter();
 
-  const onSubmit = handleSubmit((data) => {
-    startTransition(() => {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("capacity", data.capacity.toString());
-      formData.append("gradeId", String(Number(data.gradeId)));
-      if (data.supervisorId) formData.append("supervisorId", data.supervisorId);
-      if (data.id) formData.append("id", data.id.toString());
-      formAction(formData);
-    });
-  });
-
   useEffect(() => {
     if (state.success) {
       toast.success(
@@ -82,7 +70,7 @@ const ClassForm = ({
 
   const { teachers, grades } = relatedData || {};
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
+    <form className="flex flex-col gap-8" action={formAction}>
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new class" : "Update class"}
       </h1>
@@ -119,7 +107,7 @@ const ClassForm = ({
             <option value="">Select Grade</option>
             {relatedData?.grades?.map(
               (grade: { id: number; level: number }) => (
-                <option key={grade.id} value={grade.id} selected={data && grade.id === data.gradeId}>
+                <option key={grade.id} value={grade.id}>
                   {grade.level}
                 </option>
               )
@@ -142,7 +130,7 @@ const ClassForm = ({
           <option value="">Select Supervisor</option>
           {relatedData?.teachers?.map(
             (teacher: { id: string; name: string; surname: string }) => (
-              <option key={teacher.id} value={teacher.id} selected={data && teacher.id === data.supervisorId}>
+              <option key={teacher.id} value={teacher.id}>
                 {teacher.name + " " + teacher.surname}
               </option>
             )

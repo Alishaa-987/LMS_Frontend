@@ -28,7 +28,7 @@ model Teacher{
    address    String
    img        String?
    bloodType  String
-   sex        UserSex ?
+   sex        UserSex 
    createdAt  DateTime@default(now())
    birthday   DateTime
    subjects   Subject[]
@@ -45,7 +45,7 @@ model Student{
   address    String
   img        String?
   bloodType  String
-  sex        UserSex
+  sex        UserSex?
   createdAt  DateTime@default(now())
   birthday   DateTime
   parentId   String
@@ -98,6 +98,7 @@ model Subject{
   name     String
   teachers Teacher[]
   lessons   Lesson[]
+  assignments Assignment[]
 
 }
 model Lesson{
@@ -135,6 +136,9 @@ model Assignment{
     startDate DateTime
     dueDate   DateTime
     result    Result[]
+    subjectId Int 
+    subject Subject @relation(fields: [subjectId] , references :[id])
+
     lessonId  Int
     lesson Lesson @relation(fields:lessonId , references:[id])
 

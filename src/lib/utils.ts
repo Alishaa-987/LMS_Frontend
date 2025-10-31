@@ -1,18 +1,18 @@
 import { auth } from "@clerk/nextjs/server";
 
-// export async function getRole() {
-//   const { sessionClaims } = await auth();
-//   return (sessionClaims?.metadata as { role?: string })?.role;
-// }
+export async function getRole() {
+  const { sessionClaims } = await auth();
+  return (sessionClaims?.metadata as { role?: string })?.role;
+}
 
-// export async function getCurrentUserId() {
-//   const { userId } = await auth();
-//   return userId;
-// }
+export async function getCurrentUserId() {
+  const { userId } = await auth();
+  return userId;
+}
 
 // For backward compatibility, but these will only work in request context
-export const role = null;
-export const currentUserId = null;
+export const role: string | null = null;
+export const currentUserId: string | null = null;
 
 const currentWorkWeek = () => {
   const today = new Date();

@@ -85,6 +85,20 @@ async function main() {
     });
   }
 
+  // Assign teachers to subjects
+  for (let i = 1; i <= 10; i++) {
+    const subjectId = i;
+    const teacherIds = [`teacher${(i % 15) + 1}`, `teacher${((i + 1) % 15) + 1}`];
+    await prisma.subject.update({
+      where: { id: subjectId },
+      data: {
+        teachers: {
+          connect: teacherIds.map(id => ({ id })),
+        },
+      },
+    });
+  }
+
   // LESSON
   for (let i = 1; i <= 30; i++) {
     await prisma.lesson.upsert({
@@ -169,6 +183,7 @@ async function main() {
         title: `Assignment${i}`,
         startDate: new Date(),
         dueDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+        subjectId: (i % 10) + 1,
         lessonId: (i % 30) + 1,
       },
     });

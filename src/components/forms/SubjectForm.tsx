@@ -55,12 +55,8 @@ const SubjectForm = ({
 
   const router = useRouter();
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit((formData) => {
     startTransition(() => {
-      const formData = new FormData();
-      formData.append('name', data.name);
-      selectedTeachers.forEach(teacher => formData.append('teachers', teacher));
-      if (data.id) formData.append('id', data.id.toString());
       formAction(formData);
     });
   });
@@ -99,35 +95,29 @@ const SubjectForm = ({
           error={errors?.name}
           inputProps={{}}
         />
-         
-    {   data &&   <input
-          type="hidden"
-          {...register("id")}
-          defaultValue={data?.id}
-        />}
-
-          <div className="flex flex-col gap-2 w-full md:w-1/4">
-           <label className="text-xs text-gray-500">Teachers</label>
-           <select
-             multiple
-             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-             value={selectedTeachers}
-             onChange={(e) => {
-               const values = Array.from(e.target.selectedOptions, option => option.value);
-               setSelectedTeachers(values);
-               setValue("teachers", values);
-             }}
-           >
-             {teachers.map((teacher :{id: string ;  name: string; surname: string}) => (
-               <option key={teacher.id}  value={teacher.id}>{teacher.name + " " + teacher.surname} </option>
-             ))}
-           </select>
-           {errors.teachers?.message && (
-             <p className="text-red-400 text-xs">
-               {errors.teachers.message.toString()}
-             </p>
-           )}
-         </div>
+          
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">Teachers</label>
+          <select
+            multiple
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            value={selectedTeachers}
+            onChange={(e) => {
+              const values = Array.from(e.target.selectedOptions, option => option.value);
+              setSelectedTeachers(values);
+              setValue("teachers", values);
+            }}
+          >
+            {teachers.map((teacher :{id: string ;  name: string; surname: string}) => (
+              <option key={teacher.id}  value={teacher.id}>{teacher.name + " " + teacher.surname} </option>
+            ))}
+          </select>
+          {errors.teachers?.message && (
+            <p className="text-red-400 text-xs">
+              {errors.teachers.message.toString()}
+            </p>
+          )}
+        </div>
       </div>
 
       {state.error && (

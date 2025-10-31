@@ -110,8 +110,8 @@ const forms: {
     <ParentForm
       type={type}
       data={data}
-      // setOpen={setOpen}
-      // relatedData={relatedData}
+      setOpen={setOpen}
+      relatedData={relatedData}
     />
   ),
   subject: (setOpen, type, data, relatedData) => (
@@ -130,10 +130,21 @@ const forms: {
       relatedData={relatedData}
     />
   ),
-  lesson: (setOpen, type, data) => <LessonForm type={type} data={data} />,
-  exam: (setOpen, type, data) => <ExamForm type={type} data={data} />,
-  assignment: (setOpen, type, data) => (
-    <AssignmentForm type={type} data={data} />
+  lesson: (setOpen, type, data , relatedData) =>
+  <LessonForm
+  type={type}
+   data={data}
+   setOpen={setOpen}
+   relatedData={relatedData}
+   />,
+  exam: (setOpen, type, data, relatedData) => <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+  assignment: (setOpen, type, data, relatedData) => (
+    <AssignmentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
   ),
 
 

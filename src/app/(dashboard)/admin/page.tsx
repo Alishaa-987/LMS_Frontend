@@ -6,11 +6,13 @@ import CountChartContainer from "@/components/forms/CountChartContainer";
 import UserCard from "@/components/UserCard";
 import React from "react";
 
-const AdminPage = ({
+const AdminPage = async ({
   searchParams,
 }: {
-  searchParams: { [keys: string]: string | undefined };
+  searchParams: Promise<{ [keys: string]: string | undefined }>;
 }) => {
+  const searchParamsResolved = await searchParams;
+
   return (
     <div className="p-4 flex gap-4 flex-col md:flex-row">
       {/* left */}
@@ -41,7 +43,7 @@ const AdminPage = ({
       </div>
       {/* right */}
       <div className="w-full lg:w-1/3 flex flex-col gap-6">
-        <EventCalendarContainer searchParams={searchParams} />
+        <EventCalendarContainer searchParams={searchParamsResolved} />
         <Announcements />
       </div>
     </div>

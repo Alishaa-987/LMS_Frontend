@@ -1,82 +1,82 @@
-import FormModel from "@/components/FormModel";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Parent, Prisma, PrismaClient, Student } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { getRole } from "@/lib/utils";
+import FormContainer from "@/components/forms/FormContainer";
 
-type ParentList = Parent & { students: Student[] };
-
-const columns = [
-  {
-    header: "Info",
-    accessor: "info",
-  },
-  {
-    header: "Student Name",
-    accessor: "students",
-    className: "hidden md:table-cell",
-  },
-
-  {
-    header: "Phone",
-    accessor: "phone",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Address",
-    accessor: "address",
-    className: "hidden md:table-cell",
-  },
-
-  ...( role === "admin" ?[{
-    header: "Actions",
-    accessor: "action",
-  },]:[])
-];
-const renderRow = (item: ParentList) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">
-      <div className="flex flex-col">
-        <h3 className="font-semibold">{item.name}</h3>
-        <p className="text-xs text-gray-500">{item?.email}</p>
-      </div>
-    </td>
-    <td className="hidden md:table-cell">
-      {" "}
-      {item.students.map((student) => student.name).join(",")}
-    </td>
-
-    <td className="hidden md:table-cell"> {item.phone}</td>
-
-    <td className="hidden md:table-cell"> {item.address}</td>
-
-    <td>
-      <div className="flex items-center gap-4">
-        {role === "admin" && (
-          <>
-            <FormModel table="parent" type="update" data={item} />
-            <FormModel table="parent" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
+type ParentList
+ = Parent & { students: Student[] };
 const ParentListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { page, ...queryParams } = await searchParams;
+  const searchParamsResolved = await searchParams;
+  const { page, ...queryParams } = searchParamsResolved;
   const p = page ? parseInt(page) : 1;
+
+  const role = await getRole();
+
+  const columns = [
+    {
+      header: "Info",
+      accessor: "info",
+    },
+    {
+      header: "Student Name",
+      accessor: "students",
+    },
+    {
+      header: "Phone",
+      accessor: "phone",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Address",
+      accessor: "address",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Actions",
+      accessor: "action",
+    },
+  ];
+
+  const renderRow = (item: ParentList) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{item.name}</h3>
+          <p className="text-xs text-gray-500">{item?.email}</p>
+        </div>
+      </td>
+      <td className="">
+        {item.students.map((student: Student) => student.name + " " + student.surname).join(", ")}
+      </td>
+
+      <td className="hidden md:table-cell"> {item.phone}</td>
+
+      <td className="hidden md:table-cell"> {item.address}</td>
+
+      <td>
+        <div className="flex items-center gap-4">
+          {role === "admin" && (
+            <>
+              <FormContainer table="parent" type="update" data={item} />
+              <FormContainer table="parent" type="delete" id={item.id} />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 
   // URL PARAMS CONDITION
   const query: Prisma.ParentWhereInput = {};
@@ -122,7 +122,7 @@ const ParentListPage = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && <FormModel table="parent" type="create" />}
+          {role === "admin" && <FormContainer table="parent" type="create" />}
         </div>
       </div>
       {/* List */}

@@ -2,8 +2,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
-import FormModel from "@/components/FormModel";
+import { getCurrentUserId, getRole } from "@/lib/utils";
 import {
   Assignment,
   Class,
@@ -13,8 +12,8 @@ import {
   Teacher,
 } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+import FormContainer from "@/components/forms/FormContainer";
 
 type AssignmentList = Assignment & {
   lesson: {
@@ -23,59 +22,6 @@ type AssignmentList = Assignment & {
     teacher: Teacher;
   };
 };
-const columns = [
-  {
-    header: "Subject Name",
-    accessor: "info",
-  },
-  {
-    header: "Class",
-    accessor: "class",
-  },
-  {
-    header: "Teacher",
-    accessor: "teacher",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: " Due Date",
-    accessor: " dueDate",
-    className: "hidden md:table-cell",
-  },
-
- ...(role === "admin" || role ==="teacher" ?[ {
-    header: "Actions",
-    accessor: "action",
-  }] : []),
-];
-const renderRow = (item: AssignmentList) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">
-      <div className="flex flex-col">{item.lesson.subject.name}</div>
-    </td>
-    <td>{item?.lesson.class.name}</td>
-    <td className="hidden md:table-cell">
-      {item?.lesson.teacher.name + " " + item?.lesson.teacher.surname}
-    </td>
-    <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
-    </td>
-
-    <td>
-      <div className="flex items-center gap-4">
-        {(role === "admin" || role === "teacher") && (
-          <>
-            <FormModel table="assignment" type="update" data={item} />
-            <FormModel table="assignment" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
 const AssignmentListPage = async ({
   searchParams,
 }: {
@@ -83,6 +29,63 @@ const AssignmentListPage = async ({
 }) => {
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
+
+  const role = await getRole();
+  const currentUserId = await getCurrentUserId();
+
+  const columns = [
+    {
+      header: "Subject Name",
+      accessor: "info",
+    },
+    {
+      header: "Class",
+      accessor: "class",
+    },
+    {
+      header: "Teacher",
+      accessor: "teacher",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: " Due Date",
+      accessor: " dueDate",
+      className: "hidden md:table-cell",
+    },
+
+   ...(role === "admin" || role ==="teacher" ?[ {
+      header: "Actions",
+      accessor: "action",
+    }] : []),
+  ];
+  const renderRow = (item: AssignmentList) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-200 text-sm hover:bg-lamaPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <div className="flex flex-col">{item.lesson.subject.name}</div>
+      </td>
+      <td>{item?.lesson.class.name}</td>
+      <td className="hidden md:table-cell">
+        {item?.lesson.teacher.name + " " + item?.lesson.teacher.surname}
+      </td>
+      <td className="hidden md:table-cell">
+        {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
+      </td>
+
+      <td>
+        <div className="flex items-center gap-4">
+          {(role === "admin" || role === "teacher") && (
+            <>
+              <FormContainer table="assignment" type="update" data={item} relatedData={relatedData} />
+              <FormContainer table="assignment" type="delete" id={item.id} />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 
   // URL PARAMS CONDITION
   const query: Prisma.AssignmentWhereInput = {};
@@ -162,6 +165,17 @@ case "student":
     prisma.assignment.count({ where: query }),
   ]);
 
+  // Fetch subjects and classes for the form
+  const subjects = await prisma.subject.findMany({
+    select: { id: true, name: true },
+  });
+
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  const relatedData = { subjects, classes };
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* Top */}
@@ -181,9 +195,7 @@ case "student":
           </button>
 
           {role === "admin" && (
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" alt="" width={14} height={14} />
-            </button>
+            <FormContainer table="assignment" type="create" />
           )}
         </div>
       </div>

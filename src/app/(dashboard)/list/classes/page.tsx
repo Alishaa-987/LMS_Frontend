@@ -4,7 +4,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { getRole, role } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Teacher } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
@@ -31,8 +31,8 @@ const columns = [
     accessor: "supervisro",
     className: "hidden md:table-cell",
   },
-  ...( role === "admin" ?[
- {   header: "Actions",
+  ...( true ?[
+  {   header: "Actions",
     accessor: "action",
   },
   ]: []),
@@ -51,7 +51,7 @@ const columns = [
 
       <td>
         <div className="flex items-center gap-4">
-          {role === "admin" && (
+          {true && (
             <>
               <FormContainer table="class" type="update" data={item} />
               <FormContainer table="class" type="delete" id={item.id} />
@@ -68,6 +68,8 @@ const ClassListPage  = async ({
 }) => {
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
+
+  const role = await getRole();
 
   // URL PARAMS CONDITION
   const query: Prisma.ClassWhereInput = {};
@@ -120,7 +122,7 @@ const ClassListPage  = async ({
             <Image src="/sort.png" alt="" width={14} height={14} />
           </button>
 
-          {role === "admin" && (
+          {true && (
               <FormContainer table="class" type="create" />
 
           )}

@@ -8,7 +8,6 @@ import React, {
   startTransition,
 } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
@@ -44,20 +43,6 @@ const StudentForm = ({
     setValue,
   } = useForm({
     resolver: zodResolver(studentsSchema),
-    defaultValues: {
-      username: data?.username || "",
-      name: data?.name || "",
-      surname: data?.surname || "",
-      email: data?.email || "",
-      phone: data?.phone || "",
-      address: data?.address || "",
-      bloodType: data?.bloodType || "",
-      sex: data?.sex || "",
-      birthday: data?.birthday
-        ? new Date(data.birthday).toISOString().split("T")[0]
-        : "",
-      id: data?.id,
-    },
   });
 
   const [state, formAction] = useActionState(
@@ -72,12 +57,8 @@ const StudentForm = ({
 
   const [img, setImage] = useState<any>();
   const onSubmit = handleSubmit((data) => {
-    console.log("Form data being submitted:", data);
     startTransition(() => {
-      formAction({
-        ...data,
-        img: img?.secure_url,
-      });
+      formAction(data);
     });
   });
 
@@ -105,7 +86,7 @@ const StudentForm = ({
       <span className="text-xs text-gray-400 font-medium">
         Authentication Infomration
       </span>
-          
+
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="Username"
@@ -141,31 +122,25 @@ const StudentForm = ({
         Personal Infomration
       </span>
 
-<CldUploadWidget
-            uploadPreset="SchoolHub"
-            onSuccess={(result, { widget }) => {
-              setImage(result.info);
-              widget.close();
-            }}
-          >
-            {({ open }) => {
-              return (
-                <div
-                  className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-                  onClick={() => open?.()}
-                >
-                  <Image
-                    src="/upload.png"
-                    alt=""
-                    width={28}
-                    height={28}
-                    id="img"
-                  />
-                  <span>Upload a photo</span>
-                </div>
-              );
-            }}
-          </CldUploadWidget>
+      <CldUploadWidget
+        uploadPreset="SchoolHub"
+        onSuccess={(result, { widget }) => {
+          setImage(result.info);
+          widget.close();
+        }}
+      >
+        {({ open }) => {
+          return (
+            <div
+              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+              onClick={() => open?.()}
+            >
+              <Image src="/upload.png" alt="" width={28} height={28} id="img" />
+              <span>Upload a photo</span>
+            </div>
+          );
+        }}
+      </CldUploadWidget>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="First Name"
@@ -218,7 +193,13 @@ const StudentForm = ({
           type="date"
           inputProps={{}}
         />
-
+        <InputField
+          label="ParentId"
+          name="parentId"
+          register={register}
+          error={errors?.parentId}
+          inputProps={{}}
+        />
 
         {data && (
           <input type="hidden" {...register("id")} defaultValue={data?.id} />
@@ -276,7 +257,7 @@ const StudentForm = ({
                 _count: { students: number };
               }) => (
                 <option key={classItem.id} value={classItem.id}>
-                  ({classItem.name} - {" "}
+                  ({classItem.name} -{" "}
                   {(classItem._count.students ?? 0) + "/" + classItem.capacity}{" "}
                   Capacity)
                 </option>
@@ -289,8 +270,6 @@ const StudentForm = ({
             </p>
           )}
         </div>
-
-       
       </div>
       {state.error && (
         <span className="text-red-500">Something went wrong!</span>

@@ -1,4 +1,4 @@
-# 📚 EduVerse 
+# 📚 School Hub 
 
 **Description:**  
 A modern LMS-style web app built with Next.js and React to manage student data. Features include dynamic form validation, CRUD operations, conditional rendering, and a responsive dashboard UI for teachers, students, and parents.

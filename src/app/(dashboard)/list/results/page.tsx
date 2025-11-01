@@ -10,6 +10,7 @@ import Link from "next/link";
 import React from "react";
 import FormModel from "@/components/FormModel";
 import { currentUserId } from "@/lib/utils";
+import FormContainer from "@/components/forms/FormContainer";
 
 type ResultList = {
   id: number;
@@ -78,8 +79,8 @@ const renderRow = (item: ResultList) => (
       <div className="flex items-center gap-4">
         {(role === "admin" || role === "teacher") && (
           <>
-            <FormModel table="exam" type="update" data={item} />
-            <FormModel table="exam" type="delete" id={item.id} />
+            <FormContainer table="exam" type="update" data={item} />
+            <FormContainer table="exam" type="delete" id={item.id} />
          </>
         )}
       </div>
@@ -225,7 +226,7 @@ return (
         </button>
 
         {(role === "admin" || role=== "teacher") && (
-         <FormModel table="result" type="create"/>
+         <FormContainer table="result" type="create"/>
         )}
       </div>
     </div>

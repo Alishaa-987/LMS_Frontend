@@ -462,9 +462,7 @@ export const updateParent = async (
         phone: data.phone || null,
         address: data.address,
         students: {
-          set:
-            data.studentIds?.map((id) => ({ id: id })) ||
-            [],
+          set: [],
         },
       },
     });
@@ -473,7 +471,7 @@ export const updateParent = async (
     // revalidatePath("/list/parents");
     return { success: true, error: false };
   } catch (err) {
-    console.error("updateTeacher error:", err);
+    console.error("updateParent error:", err);
     return { success: false, error: true };
   }
 };
@@ -489,6 +487,12 @@ export const deleteParent = async (
       console.error("id is undefined or null");
       return { success: false, error: true };
     }
+
+    // First, update all students to remove the parent reference
+    await prisma.student.updateMany({
+      where: { parentId: id },
+      data: { parentId: "" },
+    });
 
     await prisma.parent.delete({
       where: {

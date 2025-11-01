@@ -1,6 +1,7 @@
 import React from "react";
 import FormModel from "../FormModel";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 export type FormContainerProps = {
   table:
     | "teacher"
@@ -23,6 +24,9 @@ export type FormContainerProps = {
 
 const FormContainer = async ({ table, type, data, id, relatedData: propRelatedData }: FormContainerProps) => {
   let relatedData = propRelatedData || {};
+  const {userId , sessionClaims} = await auth();
+  const role = (sessionClaims?.metadata as {role? : string}) ?.role;
+  const currentUserId = userId;
 
   if (type != "delete") {
     switch (table) {

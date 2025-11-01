@@ -1,4 +1,5 @@
 import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -48,9 +49,9 @@ const columns = [
         
           {role === "admin" && (
               <>
-              <FormModel table="announcement" type="update" data={item} />
+              <FormContainer table="announcement" type="update" data={item} />
 
-            <FormModel table="announcement" type="delete" id={item.id} /></>
+            <FormContainer table="announcement" type="delete" id={item.id} /></>
           )}
         </div>
       </td>
@@ -126,7 +127,7 @@ const AnnouncmentListPage = async ({
           </button>
 
           {role === "admin" && (
-            <FormModel table="announcement" type="create" />
+            <FormContainer table="announcement" type="create" />
 
           )}
         </div>

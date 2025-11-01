@@ -2,24 +2,12 @@ import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-const role = "admin"; // Temporary fix
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { auth } from "@clerk/nextjs/server";
-// import { role } from "@/lib/utils";
+import { getRole, getCurrentUserId, role } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
-export async function getRole() {
-  const { sessionClaims } = await auth();
-  return (sessionClaims?.metadata as { role?: string })?.role;
-}
-
-export async function getCurrentUserId() {
-  const { userId } = await auth();
-  return userId;
-}
 
 type StudentList = Student & { class: Class };
 
@@ -53,10 +41,10 @@ const columns = [
     accessor: "grade",
     className: "hidden md:table-cell",
   },
-  ...( role === "admin"?[{
+  ...( role === "admin" ? [{
     header: "Actions",
     accessor: "action",
-  }]:[]),
+  }] : []),
 ];
 const renderRow = (item: StudentList) => (
   <tr
@@ -110,6 +98,7 @@ const StudentListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  const role = await getRole();
   const searchParamsResolved = await searchParams;
   console.log(searchParamsResolved);
   const { page, ...queryParams } = searchParamsResolved;

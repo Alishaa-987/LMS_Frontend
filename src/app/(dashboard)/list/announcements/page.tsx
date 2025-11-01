@@ -6,11 +6,21 @@ import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { currentUserId, role } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { Announcement, Class, Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 
-type AnnouncementList= Announcement  & {class: Class} ;
+type AnnouncementList = {
+  id: number;
+  title: string;
+  description: string;
+  date: Date;
+  classId: number | null;
+  class?: {
+    id: number;
+    name: string;
+  } | null;
+};
 const columns = [
   {
     header: "Title",
@@ -68,7 +78,7 @@ const AnnouncmentListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-  const query: Prisma.AnnouncementWhereInput = {};
+  const query: any = {};
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
@@ -78,12 +88,11 @@ const AnnouncmentListPage = async ({
             break;
             default:
             break;
-        
-        }
 
         }
       }
     }
+  }
     // Role Conditions
       const roleConditions = {
         teacher:{lessons:{some:{teacherId:currentUserId!}}},

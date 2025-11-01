@@ -3,7 +3,7 @@ import FormContainer from "@/components/forms/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { Lesson } from "@/generated/prisma";
+import { Lesson } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { getRole } from "@/lib/utils";
 import { Class, Prisma, PrismaClient, Subject, Teacher } from "@prisma/client";

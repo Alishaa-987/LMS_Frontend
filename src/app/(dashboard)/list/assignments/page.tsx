@@ -3,23 +3,32 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { getCurrentUserId, getRole } from "@/lib/utils";
-import {
-  Assignment,
-  Class,
-  Prisma,
-  PrismaClient,
-  Subject,
-  Teacher,
-} from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import FormContainer from "@/components/forms/FormContainer";
 
-type AssignmentList = Assignment & {
+type AssignmentList = {
+  id: number;
+  title: string;
+  startDate: Date;
+  dueDate: Date;
+  lessonId: number;
+  subjectId: number;
   lesson: {
-    subject: Subject;
-    class: Class;
-    teacher: Teacher;
+    subject: {
+      id: number;
+      name: string;
+    };
+    class: {
+      id: number;
+      name: string;
+    };
+    teacher: {
+      id: string;
+      name: string;
+      surname: string;
+    };
   };
 };
 const AssignmentListPage = async ({
@@ -88,7 +97,7 @@ const AssignmentListPage = async ({
   );
 
   // URL PARAMS CONDITION
-  const query: Prisma.AssignmentWhereInput = {};
+  const query: any = {};
 
 
   query.lesson ={};

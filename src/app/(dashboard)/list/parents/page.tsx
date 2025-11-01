@@ -14,12 +14,11 @@ type ParentList = Parent & { students: Student[] };
 const ParentListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
 
 const { sessionClaims } =  await auth();
 const role = (sessionClaims?.metadata as { role?: string })?.role;
-
 
 const columns = [
   {
@@ -80,7 +79,8 @@ const renderRow = (item: ParentList) => (
   </tr>
 );
 
-  const { page, ...queryParams } = searchParams;
+  const searchParamsResolved = await searchParams;
+  const { page, ...queryParams } = searchParamsResolved;
 
   const p = page ? parseInt(page) : 1;
 

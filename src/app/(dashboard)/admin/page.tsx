@@ -43,7 +43,7 @@ const AdminPage = async ({
       </div>
       {/* right */}
       <div className="w-full lg:w-1/3 flex flex-col gap-6">
-        <EventCalendarContainer searchParams={searchParamsResolved} />
+        <EventCalendarContainer searchParams={searchParams} />
         <Announcements />
       </div>
     </div>

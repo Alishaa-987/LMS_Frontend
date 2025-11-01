@@ -3,12 +3,13 @@ import React from "react";
 import EventCalender from "./EventCalender";
 import EventList from "./EventList";
 
-const EventCalendarContainer =  ({
+const EventCalendarContainer = async ({
   searchParams,
 }: {
-  searchParams: { [keys: string]: string | undefined };
+  searchParams: Promise<{ [keys: string]: string | undefined }>;
 }) => {
-    const {date} = searchParams;
+    const searchParamsResolved = await searchParams;
+    const {date} = searchParamsResolved;
   return (
     <div className="bg-white p-4 rounded-md">
       <EventCalender />

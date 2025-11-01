@@ -54,7 +54,7 @@ const SubjectListPage = async ({
 
           {role === "admin" && (
             <>
-              <FormContainer table="subject" type="update" data={item} />
+              <FormContainer table="subject" type="update" data={item} relatedData={relatedData} />
               <FormContainer table="subject" type="delete" id={item.id} />
             </>
           )}
@@ -92,6 +92,12 @@ const SubjectListPage = async ({
     prisma.subject.count({ where: query }),
   ]);
 
+  // Fetch teachers for the form
+  const teachers = await prisma.teacher.findMany({
+    select: { id: true, name: true, surname: true },
+  });
+
+  const relatedData = { teachers };
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -110,7 +116,7 @@ const SubjectListPage = async ({
           </button>
 
           {role === "admin"
-          && <FormContainer table="subject" type="create" />}
+          && <FormContainer table="subject" type="create" relatedData={relatedData} />}
         </div>
       </div>
       {/* List */}

@@ -53,7 +53,7 @@ const columns = [
         <div className="flex items-center gap-4">
           {true && (
             <>
-              <FormContainer table="class" type="update" data={item} />
+              <FormContainer table="class" type="update" data={item}  />
               <FormContainer table="class" type="delete" id={item.id} />
             </>
           )}
@@ -104,8 +104,17 @@ const ClassListPage  = async ({
     prisma.class.count({ where: query }),
   ]);
 
- 
- 
+  // Fetch teachers and grades for the form
+  const teachers = await prisma.teacher.findMany({
+    select: { id: true, name: true, surname: true },
+  });
+
+  const grades = await prisma.grade.findMany({
+    select: { id: true, level: true },
+  });
+
+  const relatedData = { teachers, grades };
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* Top */}
@@ -123,7 +132,7 @@ const ClassListPage  = async ({
           </button>
 
           {true && (
-              <FormContainer table="class" type="create" />
+              <FormContainer table="class" type="create" relatedData={relatedData} />
 
           )}
         </div>

@@ -163,7 +163,7 @@ const ExamListPage = async ({
 
       <td>
         <div className="flex items-center gap-4">
-          <FormContainer table="exam" type="update" data={item} />
+          <FormContainer table="exam" type="update" data={item} relatedData={{ lessons: lessonsData }} />
 
           <FormContainer table="exam" type="delete" id={item.id}  />
         </div>

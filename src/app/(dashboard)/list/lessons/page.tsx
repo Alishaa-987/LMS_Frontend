@@ -100,7 +100,7 @@ const LessonListPage  = async ({
       where: query,
       include: {
         subject: {select : {name : true}},
-        class: {select : {name : true}}, 
+        class: {select : {name : true}},
         teacher: {select : {name : true , surname : true}},
 
       },
@@ -110,7 +110,21 @@ const LessonListPage  = async ({
     prisma.lesson.count({ where: query }),
   ]);
 
-  
+  // Fetch related data for forms
+  const subjects = await prisma.subject.findMany({
+    select: { id: true, name: true },
+  });
+
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  const teachers = await prisma.teacher.findMany({
+    select: { id: true, name: true, surname: true },
+  });
+
+  const relatedData = { subjects, classes, teachers };
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* Top */}
@@ -128,7 +142,7 @@ const LessonListPage  = async ({
           </button>
 
           {true && (
-             <FormContainer table="lesson" type="create"/>
+             <FormContainer table="lesson" type="create" relatedData={relatedData}/>
 
           )}
         </div>

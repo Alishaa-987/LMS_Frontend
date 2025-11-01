@@ -41,7 +41,7 @@ const columns = [
     accessor: "grade",
     className: "hidden md:table-cell",
   },
-  ...( role === "admin" ? [{
+  ...(true ? [{
     header: "Actions",
     accessor: "action",
   }] : []),
@@ -83,7 +83,7 @@ const renderRow = (item: StudentList) => (
             <Image src="/view.png" alt="View" width={20} height={20} />
           </button>
         </Link>
-        {role === "admin" && (
+        {true && (
           <>
             <FormContainer table="student" type="update" data={item} />
             <FormContainer table="student" type="delete" id={item.id} />

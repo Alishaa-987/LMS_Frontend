@@ -68,7 +68,7 @@ const ParentForm = ({
     }
   }, [state.success, state.error, type, router, setOpen]);
 
-  const { students } = relatedData;
+  const { students } = relatedData || {};
 
   return (
     <form className="flex flex-col gap-8" action={formAction}>

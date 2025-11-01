@@ -89,7 +89,7 @@ const renderRow = (item: TeacherList, role?: string) => (
         </Link>
         {role === "admin" && (
           <>
-            <FormContainer table="teacher" type="update" data={item} />
+            <FormContainer table="teacher" type="update" data={item}  />
             <FormContainer table="teacher" type="delete" id={item.id} />
           </>
         )}
@@ -148,6 +148,14 @@ const TeacherListPage = async ({
       }),
       prisma.teacher.count({ where: query }),
     ]);
+  
+    // Fetch subjects for the form
+    const subjects = await prisma.subject.findMany({
+      select: { id: true, name: true },
+    });
+  
+    const relatedData = { subjects };
+  
     return (
       <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
         {/* Top */}
@@ -168,7 +176,7 @@ const TeacherListPage = async ({
               // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               //   <Image src="/plus.png" alt="" width={14} height={14} />
               // </button>
-              <FormContainer table="teacher" type="create" />
+              <FormContainer table="teacher" type="create" relatedData={relatedData} />
             )}
           </div>
         </div>

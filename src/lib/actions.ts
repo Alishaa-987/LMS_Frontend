@@ -77,10 +77,33 @@ export const deleteSubject = async (
       return { success: false, error: true };
     }
 
-    await prisma.subject.delete({
-      where: {
-        id: Number(id),
-      },
+    // Start a transaction to ensure all operations succeed or fail together
+    await prisma.$transaction(async (tx) => {
+      // Delete related records first to avoid foreign key constraint errors
+      await tx.assignment.deleteMany({
+        where: { subjectId: Number(id) },
+      });
+
+      await tx.lesson.deleteMany({
+        where: { subjectId: Number(id) },
+      });
+
+      // Remove subject from all teachers (many-to-many relationship)
+      await tx.subject.update({
+        where: { id: Number(id) },
+        data: {
+          teachers: {
+            set: []
+          }
+        }
+      });
+
+      // Finally delete the subject
+      await tx.subject.delete({
+        where: {
+          id: Number(id),
+        },
+      });
     });
 
     console.log("Subject deleted successfully");
@@ -152,21 +175,26 @@ export const updateStudent = async (
     return { success: false, error: true };
   }
   try {
-    const Client = await clerkClient();
-    await Client.users.updateUser(data.id);
-    const user = await Client.users.updateUser(data.id, {
-      username: data.username,
-      ...(data.password !== "" && { password: data.password }),
-      firstName: data.name,
-      lastName: data.surname,
-    });
+    // Update Clerk user only if password is provided
+    if (data.password && data.password !== "") {
+      try {
+        const Client = await clerkClient();
+        await Client.users.updateUser(data.id, {
+          username: data.username,
+          password: data.password,
+          firstName: data.name,
+          lastName: data.surname,
+        });
+      } catch (clerkErr) {
+        console.warn("Clerk user update failed, but continuing with DB update:", clerkErr);
+      }
+    }
 
     await prisma.student.update({
       where: {
         id: data.id,
       },
       data: {
-        ...(data.password !== "" && { password: data.password }),
         username: data.username,
         name: data.name,
         surname: data.surname,
@@ -179,13 +207,13 @@ export const updateStudent = async (
         birthday: data.birthday,
         gradeId: data.gradeId,
         classId: data.classId,
-        parentId: data.parentId,
+        parentId: data.parentId || null,
       },
     });
     // revalidatePath("/list/students");
     return { success: true, error: false };
   } catch (err) {
-    console.log(err);
+    console.error("updateStudent error:", err);
     return { success: false, error: true };
   }
 };
@@ -462,7 +490,7 @@ export const updateParent = async (
         phone: data.phone || null,
         address: data.address,
         students: {
-          set: [],
+          set: data.studentIds?.map((id) => ({ id })) || [],
         },
       },
     });
@@ -488,12 +516,7 @@ export const deleteParent = async (
       return { success: false, error: true };
     }
 
-    // First, update all students to remove the parent reference
-    await prisma.student.updateMany({
-      where: { parentId: id },
-      data: { parentId: "" },
-    });
-
+    // Delete the parent directly - students can exist without parents
     await prisma.parent.delete({
       where: {
         id,
@@ -529,6 +552,24 @@ export const deleteClass = async (
       console.error("Class not found with id:", id);
       return { success: false, error: true };
     }
+
+    // Delete related records first to avoid foreign key constraint errors
+    await prisma.lesson.deleteMany({
+      where: { classId: Number(id) },
+    });
+
+    await prisma.student.updateMany({
+      where: { classId: Number(id) },
+      data: { classId: 1 }, // Move students to a default class
+    });
+
+    await prisma.announcement.deleteMany({
+      where: { classId: Number(id) },
+    });
+
+    await prisma.event.deleteMany({
+      where: { classId: Number(id) },
+    });
 
     await prisma.class.delete({
       where: {

@@ -195,7 +195,7 @@ case "student":
           </button>
 
           {role === "admin" && (
-            <FormContainer table="assignment" type="create" />
+            <FormContainer table="assignment" type="create" relatedData={relatedData} />
           )}
         </div>
       </div>

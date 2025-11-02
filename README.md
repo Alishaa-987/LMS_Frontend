@@ -203,10 +203,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - UI components inspired by modern dashboard designs
 - Icons and assets from various free resources
 
-## 📞 Support
 
-For support, email [your-email@example.com] or create an issue in the repository.
-
----
 
 **Made with ❤️ for educational excellence**

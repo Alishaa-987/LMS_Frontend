@@ -203,18 +203,31 @@ async function main() {
     });
   }
 
-  // ATTENDANCE
-  for (let i = 1; i <= 50; i++) {
-    await prisma.attendance.upsert({
-      where: { id: i },
-      update: {},
-      create: {
-        date: new Date(),
-        present: Math.random() > 0.2, // 80% present rate
-        studentId: `student${i}`,
-        lessonId: (i % 30) + 1,
-      },
-    });
+  // ATTENDANCE - Create for current week
+  const today = new Date();
+  let attendanceId = 1;
+
+  // Calculate Monday of current week
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (today.getDay() === 0 ? 6 : today.getDay() - 1));
+
+  for (let dayOffset = 0; dayOffset < 5; dayOffset++) { // Mon to Fri
+    const attendanceDate = new Date(monday);
+    attendanceDate.setDate(monday.getDate() + dayOffset);
+
+    for (let studentNum = 1; studentNum <= 50; studentNum++) {
+      await prisma.attendance.upsert({
+        where: { id: attendanceId },
+        update: {},
+        create: {
+          date: attendanceDate,
+          present: Math.random() > 0.2, // 80% present rate
+          studentId: `student${studentNum}`,
+          lessonId: (studentNum % 30) + 1,
+        },
+      });
+      attendanceId++;
+    }
   }
 
   // EVENT

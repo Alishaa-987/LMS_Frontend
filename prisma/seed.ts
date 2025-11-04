@@ -99,25 +99,41 @@ async function main() {
     });
   }
 
-  // LESSON
-  for (let i = 1; i <= 30; i++) {
-    await prisma.lesson.upsert({
-      where: { id: i },
-      update: {},
-      create: {
-        name: `Lesson${i}`,
-        day: Day[
-          Object.keys(Day)[
-            Math.floor(Math.random() * Object.keys(Day).length)
-          ] as keyof typeof Day
-        ],
-        startTime: new Date(new Date().setHours(new Date().getHours() + 1)),
-        endTime: new Date(new Date().setHours(new Date().getHours() + 3)),
-        subjectId: (i % 10) + 1,
-        classId: (i % 6) + 1,
-        teacherId: `teacher${(i % 15) + 1}`,
-      },
-    });
+  // LESSON - Create lessons for current week
+  const lessonToday = new Date();
+  const lessonMonday = new Date(lessonToday);
+  lessonMonday.setDate(lessonToday.getDate() - (lessonToday.getDay() === 0 ? 6 : lessonToday.getDay() - 1));
+
+  const lessonDaysOfWeek = [Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY];
+  let lessonId = 1;
+
+  for (let dayIndex = 0; dayIndex < 5; dayIndex++) { // Mon to Fri
+    const lessonDate = new Date(lessonMonday);
+    lessonDate.setDate(lessonMonday.getDate() + dayIndex);
+
+    for (let lessonNum = 1; lessonNum <= 6; lessonNum++) { // 6 lessons per day
+      const startHour = 8 + lessonNum; // Start from 9 AM
+      const startTime = new Date(lessonDate);
+      startTime.setHours(startHour, 0, 0, 0);
+
+      const endTime = new Date(lessonDate);
+      endTime.setHours(startHour + 1, 0, 0, 0);
+
+      await prisma.lesson.upsert({
+        where: { id: lessonId },
+        update: {},
+        create: {
+          name: `Lesson${lessonId}`,
+          day: lessonDaysOfWeek[dayIndex],
+          startTime: startTime,
+          endTime: endTime,
+          subjectId: (lessonId % 10) + 1,
+          classId: (lessonId % 6) + 1,
+          teacherId: `teacher${(lessonId % 15) + 1}`,
+        },
+      });
+      lessonId++;
+    }
   }
 
   // PARENT

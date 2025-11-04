@@ -210,6 +210,8 @@ export const updateStudent = async (
         parentId: data.parentId ? data.parentId : null,
       },
     });
+
+    // revalidatePath("/list/students");
     // revalidatePath("/list/students");
     return { success: true, error: false };
   } catch (err) {
@@ -273,12 +275,12 @@ export const createTeacher = async (
        const Client = await clerkClient();
     await Client.users.createUser(id);
     const user = await Client.users.createUser({
-      username: data.username,
-      password: data.password,
-      firstName: data.name,
-      lastName: data.surname,
-      publicMetadata: { role: "parent" },
-    });
+        username: data.username,
+        password: data.password,
+        firstName: data.name,
+        lastName: data.surname,
+        publicMetadata: { role: "teacher" },
+      });
 
     await prisma.teacher.create({
       data: {

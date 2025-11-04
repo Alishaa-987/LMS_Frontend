@@ -43,6 +43,23 @@ const StudentForm = ({
     setValue,
   } = useForm({
     resolver: zodResolver(studentsSchema),
+    defaultValues: {
+      username: data?.username || "",
+      name: data?.name || "",
+      surname: data?.surname || "",
+      email: data?.email || "",
+      phone: data?.phone || "",
+      address: data?.address || "",
+      bloodType: data?.bloodType || "",
+      sex: data?.sex || "",
+      birthday: data?.birthday
+        ? new Date(data.birthday).toISOString().split("T")[0]
+        : "",
+      parentId: data?.parentId || "",
+      gradeId: data?.gradeId || "",
+      classId: data?.classId || "",
+      id: data?.id,
+    },
   });
 
   const [state, formAction] = useActionState(
@@ -58,7 +75,10 @@ const StudentForm = ({
   const [img, setImage] = useState<any>();
   const onSubmit = handleSubmit((data) => {
     startTransition(() => {
-      formAction(data);
+      formAction({
+        ...data,
+        img: img?.secure_url,
+      });
     });
   });
 

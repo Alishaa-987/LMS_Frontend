@@ -122,10 +122,10 @@ const Menu = async () => {
   const role = user?.publicMetadata?.role as string || "admin";
 
   return (
-    <div className="mt-4 text-sm">
+    <div className="mt-2 md:mt-4 text-xs md:text-sm">
       {menuItems.map((i) => (
-        <div className="flex flex-col gap-2 " key={i.title}>
-          <span className="hidden lg:block text-gray-400 font-light my-4">
+        <div className="flex flex-col gap-1 md:gap-2" key={i.title}>
+          <span className="hidden lg:block text-gray-400 font-light my-2 md:my-4 text-xs md:text-sm">
             {i.title}
           </span>
           {i.items.map((item) => {
@@ -134,15 +134,16 @@ const Menu = async () => {
                 <Link
                   href={item.href}
                   key={item.label}
-                  className="flex items-center justify-center lg:justify-start gap-4 text-gray-500 py-2 rounded-md hover:bg-lamaSkyLight md:px-2"
+                  className="flex items-center justify-center lg:justify-start gap-2 md:gap-4 text-gray-500 py-1 md:py-2 rounded-md hover:bg-lamaSkyLight px-1 md:px-2"
                 >
                   <Image
                     src={item.icon}
                     alt={item.label}
-                    width={20}
-                    height={20}
+                    width={16}
+                    height={16}
+                    className="md:w-5 md:h-5"
                   />
-                  <span className="hidden lg:block">{item.label}</span>
+                  <span className="hidden lg:block text-xs md:text-sm">{item.label}</span>
                 </Link>
               );
             }

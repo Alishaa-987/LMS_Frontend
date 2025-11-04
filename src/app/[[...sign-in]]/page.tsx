@@ -34,8 +34,8 @@ const LoginPage = () => {
             <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-yellow-100 via-teal-100 to-blue-100 shadow-md ring-4 ring-blue-200">
               <Image src="/logo.png" alt="Logo" width={32} height={32} />
             </div>
-            <h1 className="text-3xl font-extrabold text-indigo-300 tracking-tight">SchooLama</h1>
-            <p className="text-emerald-700 text-sm">Welcome back 👋</p>
+            <h1 className="text-3xl font-extrabold text-indigo-300 tracking-tight">SchooHub</h1>
+            <p className="text-emerald-700 text-sm">Welcome back! Please sign in</p>
           </div>
 
           {/* Error Message */}

@@ -129,8 +129,8 @@ export const createStudent = async (
     if (classItem && classItem.capacity === classItem._count.students) {
       return { success: false, error: true };
     }
+
    const Client = await clerkClient();
-    await Client.users.createUser(id);
 
     const user = await Client.users.createUser({
       username: data.username,
@@ -138,6 +138,7 @@ export const createStudent = async (
       firstName: data.name,
       lastName: data.surname,
       publicMetadata: { role: "student" },
+      unsafeMetadata: { dbId: "pending" },
     });
 
     await prisma.student.create({
@@ -273,14 +274,14 @@ export const createTeacher = async (
 ) => {
   try {
        const Client = await clerkClient();
-    await Client.users.createUser(id);
-    const user = await Client.users.createUser({
-        username: data.username,
-        password: data.password,
-        firstName: data.name,
-        lastName: data.surname,
-        publicMetadata: { role: "teacher" },
-      });
+         const user = await Client.users.createUser({
+            username: data.username,
+            password: data.password,
+            firstName: data.name,
+            lastName: data.surname,
+            publicMetadata: { role: "teacher" },
+            unsafeMetadata: { dbId: "pending" },
+          });
 
     await prisma.teacher.create({
       data: {

@@ -8,14 +8,11 @@ const AttendenceChartContainer = async () => {
   const dayOfWeek = today.getDay();
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-  // Start of week (local)
-  const lastMonday = new Date(today);
-  lastMonday.setDate(today.getDate() - daysSinceMonday);
-  lastMonday.setHours(0, 0, 0, 0);
+  // Start of week (UTC)
+  const lastMonday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - daysSinceMonday));
 
-  // End of today (local)
-  const endOfToday = new Date(today);
-  endOfToday.setHours(23, 59, 59, 999);
+  // End of today (UTC)
+  const endOfToday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59, 999));
 
   console.log(
     "Local Date Range:",
@@ -84,8 +81,8 @@ const AttendenceChartContainer = async () => {
   const todayName = daysOfWeek[dayOfWeek - 1];
   const data = daysOfWeek.map((day) => ({
     name: day,
-    present: day === todayName ? attendenceMap[day].present : 0,
-    absent: day === todayName ? attendenceMap[day].absent : 0,
+    present: attendenceMap[day].present,
+    absent: attendenceMap[day].absent,
   }));
 
   console.log("Chart data:", data);

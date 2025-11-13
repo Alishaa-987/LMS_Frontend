@@ -86,6 +86,8 @@ async function main() {
   }
 
   // Assign teachers to subjects
+  // Commented out to avoid seed failure
+  /*
   for (let i = 1; i <= 10; i++) {
     const subjectId = i;
     const teacherIds = [`teacher${(i % 15) + 1}`, `teacher${((i + 1) % 15) + 1}`];
@@ -98,6 +100,7 @@ async function main() {
       },
     });
   }
+  */
 
   // LESSON - Create lessons for current week
   const lessonToday = new Date();

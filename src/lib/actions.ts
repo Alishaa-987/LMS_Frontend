@@ -137,6 +137,7 @@ export const createStudent = async (
       password: data.password,
       firstName: data.name,
       lastName: data.surname,
+      ...(data.email ? { emailAddress: [data.email] } : {}),
       publicMetadata: { role: "student" },
       unsafeMetadata: { dbId: "pending" },
     });
@@ -275,13 +276,14 @@ export const createTeacher = async (
   try {
        const Client = await clerkClient();
          const user = await Client.users.createUser({
-            username: data.username,
-            password: data.password,
-            firstName: data.name,
-            lastName: data.surname,
-            publicMetadata: { role: "teacher" },
-            unsafeMetadata: { dbId: "pending" },
-          });
+           username: data.username,
+           password: data.password,
+           firstName: data.name,
+           lastName: data.surname,
+           ...(data.email ? { emailAddress: [data.email] } : {}),
+           publicMetadata: { role: "teacher" },
+           unsafeMetadata: { dbId: "pending" },
+         });
 
     await prisma.teacher.create({
       data: {
@@ -307,8 +309,11 @@ export const createTeacher = async (
     // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
-    console.log(err);
-    return { success: false, error: true };
+   console.log(err);
+   if (err && typeof err === 'object' && 'errors' in err) {
+     console.log('Clerk errors:', (err as any).errors);
+   }
+   return { success: false, error: true };
   }
 };
 
@@ -394,31 +399,55 @@ export const deleteTeacher = async (
       return { success: false, error: true };
     }
 
-    const clerk = await clerkClient();
-    await clerk.users.deleteUser(id);
+    // Start a transaction to ensure all operations succeed or fail together
+    await prisma.$transaction(async (tx) => {
+      // Disconnect teacher from all subjects (many-to-many relationship)
+      const subjectsWithTeacher = await tx.subject.findMany({
+        where: {
+          teachers: {
+            some: { id }
+          }
+        }
+      });
+      for (const subject of subjectsWithTeacher) {
+        await tx.subject.update({
+          where: { id: subject.id },
+          data: {
+            teachers: {
+              disconnect: { id }
+            }
+          }
+        });
+      }
 
-    // Delete related lessons first
-    await prisma.lesson.deleteMany({
-      where: { teacherId: id },
-    });
+      // Set supervisorId to null in classes where this teacher is supervisor
+      await tx.class.updateMany({
+        where: { supervisorId: id },
+        data: { supervisorId: null }
+      });
 
-    // Try to delete from Clerk first
+      // Delete related lessons first (this will cascade to exams, assignments, attendance)
+      await tx.lesson.deleteMany({
+        where: { teacherId: id },
+      });
+
+      // Finally delete the teacher
+      await tx.teacher.delete({
+        where: { id },
+      });
+    }, { timeout: 10000 });
+
+    // Try to delete from Clerk after successful DB deletion
     try {
-      const client = await clerkClient();
-      await client.users.deleteUser(id);
+      const clerk = await clerkClient();
+      await clerk.users.deleteUser(id);
       console.log("Clerk user deleted");
     } catch (clerkErr) {
       console.warn(
-        "Clerk user deletion failed, but continuing with DB deletion:",
+        "Clerk user deletion failed, but teacher was deleted from DB:",
         clerkErr
       );
     }
-
-    await prisma.teacher.delete({
-      where: {
-        id,
-      },
-    });
 
     console.log("Teacher deleted successfully");
     // revalidatePath("/list/teachers");
@@ -456,8 +485,11 @@ export const createParent = async (
     // revalidatePath("/list/parents");
     return { success: true, error: false };
   } catch (err) {
-    console.log(err);
-    return { success: false, error: true };
+   console.log(err);
+   if (err && typeof err === 'object' && 'errors' in err) {
+     console.log('Clerk errors:', (err as any).errors);
+   }
+   return { success: false, error: true };
   }
 };
 

@@ -29,7 +29,7 @@ const TeacherForm = ({
   relatedData?: any;
 }) => {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>(
-    data?.subjects?.map((s: any) => s.id) || []
+    data?.subjects?.map((s: any) => s.id.toString()) || []
   );
 
   const {

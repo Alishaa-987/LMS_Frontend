@@ -114,7 +114,7 @@ async function main() {
     const lessonDate = new Date(lessonMonday);
     lessonDate.setDate(lessonMonday.getDate() + dayIndex);
 
-    for (let lessonNum = 1; lessonNum <= 6; lessonNum++) { // 6 lessons per day
+    for (let lessonNum = 1; lessonNum <= 2; lessonNum++) { // 2 lessons per day
       const startHour = 8 + lessonNum; // Start from 9 AM
       const startTime = new Date(lessonDate);
       startTime.setHours(startHour, 0, 0, 0);
@@ -157,7 +157,7 @@ async function main() {
   }
 
   // STUDENT
-  for (let i = 1; i <= 50; i++) {
+  for (let i = 1; i <= 10; i++) {
     await prisma.student.upsert({
       where: { id: `student${i}` },
       update: {},
@@ -234,7 +234,7 @@ async function main() {
     const attendanceDate = new Date(monday);
     attendanceDate.setDate(monday.getDate() + dayOffset);
 
-    for (let studentNum = 1; studentNum <= 50; studentNum++) {
+    for (let studentNum = 1; studentNum <= 10; studentNum++) {
       await prisma.attendance.upsert({
         where: { id: attendanceId },
         update: {},
@@ -242,7 +242,7 @@ async function main() {
           date: attendanceDate,
           present: Math.random() > 0.2, // 80% present rate
           studentId: `student${studentNum}`,
-          lessonId: (studentNum % 30) + 1,
+          lessonId: (studentNum % 10) + 1,
         },
       });
       attendanceId++;
